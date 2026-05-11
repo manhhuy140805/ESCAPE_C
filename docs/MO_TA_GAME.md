@@ -1,431 +1,560 @@
-# MÔ TẢ GAME PARKOUR 2D
+# 🎮 ESCAPE THE LABYRINTH - HƯỚNG DẪN CHƠI GAME
 
-## I. GIỚI THIỆU TỔNG QUAN
+<div align="center">
 
-### 1.1. Tên game
 **GAME PARKOUR 2D - MÊ CUNG PHIÊU LƯU**
 
-### 1.2. Thể loại
-- **Thể loại chính**: Platformer 2D, Action-Adventure
-- **Phong cách chơi**: Parkour, Thu thập vật phẩm, Chiến đấu
-
-### 1.3. Mô tả ngắn gọn
-Game Parkour 2D là một trò chơi phiêu lưu hành động được phát triển bằng ngôn ngữ C/C++ với thư viện đồ họa WinBGIM. Người chơi điều khiển nhân vật vượt qua mê cung rộng lớn với nhiều tầng platform, thu thập chìa khóa, chiến đấu với quái vật và tìm đường thoát. Game kết hợp yếu tố vật lý thực tế, hệ thống va chạm chính xác và AI quái vật thông minh.
+*Một trò chơi phiêu lưu hành động 2D được phát triển bằng C/C++ với WinBGIM*
 
 ---
 
-## II. MỤC TIÊU GAME
+[![Language](https://img.shields.io/badge/Language-C%2FC%2B%2B-blue.svg)](https://isocpp.org/)
+[![Graphics](https://img.shields.io/badge/Graphics-WinBGIM-green.svg)](http://winbgim.codecutter.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://www.microsoft.com/windows)
+[![Status](https://img.shields.io/badge/Status-Complete-success.svg)]()
 
-### 2.1. Mục tiêu chính
-- **Thu thập đủ 3 chìa khóa vàng** ẩn trong các vị trí khác nhau trên bản đồ
-- **Tìm và mở cửa thoát** ở góc phải dưới của map
-- **Sống sót** qua các cuộc tấn công của quái vật
-
-### 2.2. Mục tiêu phụ
-- Tiêu diệt quái vật để kiếm điểm thưởng
-- Đạt điểm số cao nhất có thể
-- Hoàn thành game với HP còn lại nhiều nhất
+</div>
 
 ---
 
-## III. CƠ CHẾ GAMEPLAY
+## 📖 MỤC LỤC
 
-### 3.1. Điều khiển
+1. [Giới thiệu](#-giới-thiệu)
+2. [Cài đặt & Chạy game](#-cài-đặt--chạy-game)
+3. [Cách chơi](#-cách-chơi)
+4. [Hệ thống game](#-hệ-thống-game)
+5. [Các màn chơi](#-các-màn-chơi)
+6. [Mẹo & Chiến thuật](#-mẹo--chiến-thuật)
+7. [Công nghệ](#-công-nghệ)
+8. [Credits](#-credits)
 
-| Phím | Chức năng |
-|------|-----------|
-| **W** hoặc **Space** | Nhảy lên |
-| **A** | Di chuyển sang trái |
-| **D** | Di chuyển sang phải |
-| **Chuột trái** | Bắn đạn (hướng theo con trỏ chuột) |
-| **ESC** | Thoát game |
+---
 
-### 3.2. Hệ thống vật lý
+## 🎯 GIỚI THIỆU
 
-#### 3.2.1. Thông số vật lý
-- **Trọng lực**: 0.8 (tác động liên tục lên nhân vật)
-- **Tốc độ rơi tối đa**: 15 (giới hạn vận tốc rơi)
-- **Lực nhảy**: 12 (độ cao nhảy)
+### Câu chuyện
+Bạn là một nhà thám hiểm dũng cảm bị mắc kẹt trong một mê cung bí ẩn đầy rẫy nguy hiểm. Để thoát ra, bạn phải thu thập đủ 3 chìa khóa vàng để mở cửa thoát. Nhưng hãy cẩn thận - mê cung được canh giữ bởi những kẻ thù nguy hiểm!
+
+### Thể loại
+- **Platformer 2D**: Nhảy, leo trèo qua các tầng platform
+- **Action-Adventure**: Chiến đấu với quái vật, thu thập vật phẩm
+- **Puzzle**: Tìm đường đi, giải quyết thử thách
+
+### Đặc điểm nổi bật
+✨ **5 màn chơi** với độ khó tăng dần  
+✨ **Vật lý thực tế** - Trọng lực, ma sát, nhảy tự nhiên  
+✨ **Hệ thống bắn đạn** - Bắn theo hướng chuột  
+✨ **AI quái vật thông minh** - Tuần tra, tránh bờ vực  
+✨ **Đồ họa tự vẽ** - Sử dụng thuật toán Bresenham, Midpoint, Flood Fill  
+✨ **Hiệu ứng fractal** - Koch curves, Dragon curves trang trí  
+
+---
+
+## 💻 CÀI ĐẶT & CHẠY GAME
+
+### Yêu cầu hệ thống
+- **Hệ điều hành**: Windows 7 trở lên
+- **Compiler**: MinGW GCC (TDM-GCC-32)
+- **Thư viện**: WinBGIM (graphics.h)
+- **RAM**: 512 MB trở lên
+- **Màn hình**: 1100×800 pixels trở lên
+
+### Cài đặt
+
+#### Bước 1: Clone repository
+```bash
+git clone https://github.com/your-repo/escape-the-labyrinth.git
+cd escape-the-labyrinth
+```
+
+#### Bước 2: Build game
+```bash
+# Chạy file build script
+./build.bat
+
+# Hoặc compile thủ công
+g++ -g src/main.cpp src/graphics/Menu.cpp -o game.exe -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32
+```
+
+#### Bước 3: Chạy game
+```bash
+./game.exe
+```
+
+### Cấu trúc thư mục
+```
+escape-the-labyrinth/
+├── src/                    # Source code
+│   ├── main.cpp           # Entry point
+│   ├── config.h           # Cấu hình game
+│   ├── core/              # Thuật toán core
+│   ├── entities/          # Player, Enemy, Items
+│   ├── graphics/          # Menu, Drawing
+│   ├── levels/            # Logic các màn
+│   ├── map/               # Dữ liệu map
+│   └── utils/             # Utilities
+├── docs/                  # Tài liệu
+├── build.bat             # Build script
+└── game.exe              # Game executable
+```
+
+---
+
+## 🎮 CÁCH CHƠI
+
+### Điều khiển cơ bản
+
+<table>
+<tr>
+<th>Phím</th>
+<th>Chức năng</th>
+<th>Mô tả</th>
+</tr>
+<tr>
+<td><kbd>W</kbd> hoặc <kbd>Space</kbd></td>
+<td><strong>Nhảy</strong></td>
+<td>Nhảy lên cao (chỉ khi đứng trên mặt đất)</td>
+</tr>
+<tr>
+<td><kbd>A</kbd></td>
+<td><strong>Di chuyển trái</strong></td>
+<td>Chạy sang bên trái</td>
+</tr>
+<tr>
+<td><kbd>D</kbd></td>
+<td><strong>Di chuyển phải</strong></td>
+<td>Chạy sang bên phải</td>
+</tr>
+<tr>
+<td><kbd>Chuột trái</kbd></td>
+<td><strong>Bắn đạn</strong></td>
+<td>Bắn theo hướng con trỏ chuột</td>
+</tr>
+<tr>
+<td><kbd>ESC</kbd></td>
+<td><strong>Tạm dừng/Thoát</strong></td>
+<td>Mở menu tạm dừng hoặc thoát game</td>
+</tr>
+</table>
+
+### Mục tiêu game
+
+#### 🎯 Mục tiêu chính
+1. **Thu thập 3 chìa khóa vàng** 🔑🔑🔑
+   - Chìa khóa ẩn ở các vị trí khác nhau trên map
+   - Cần đủ 3 chìa để mở cửa thoát
+
+2. **Tìm và mở cửa thoát** 🚪
+   - Cửa thường ở góc phải dưới của map
+   - Chỉ mở được khi có đủ 3 chìa khóa
+
+3. **Sống sót** ❤️
+   - Tránh va chạm với quái vật
+   - Giữ HP > 0
+
+#### 🏆 Mục tiêu phụ
+- Tiêu diệt quái vật để kiếm điểm (+100 điểm/con)
+- Đạt điểm số cao nhất
+- Hoàn thành màn với HP tối đa
+
+### Điều kiện thắng/thua
+
+#### ✅ Thắng
+- Thu thập đủ 3 chìa khóa
+- Đến cửa thoát và mở cửa thành công
+- → Hiển thị màn hình **"YOU WIN!"** với điểm số
+
+#### ❌ Thua
+- HP giảm xuống 0 (bị quái vật tấn công quá nhiều)
+- → Hiển thị màn hình **"GAME OVER!"** với điểm số
+
+---
+
+## 🎲 HỆ THỐNG GAME
+
+### 1. Nhân vật (Player)
+
+<table>
+<tr>
+<th>Thuộc tính</th>
+<th>Giá trị</th>
+</tr>
+<tr>
+<td>Màu sắc</td>
+<td>🔵 Xanh dương</td>
+</tr>
+<tr>
+<td>Kích thước</td>
+<td>30×40 pixels</td>
+</tr>
+<tr>
+<td>HP ban đầu</td>
+<td>❤️ 100</td>
+</tr>
+<tr>
+<td>Tốc độ di chuyển</td>
+<td>5 pixels/frame</td>
+</tr>
+<tr>
+<td>Lực nhảy</td>
+<td>12 (độ cao ~150 pixels)</td>
+</tr>
+<tr>
+<td>Khả năng đặc biệt</td>
+<td>Bắn đạn theo hướng chuột</td>
+</tr>
+</table>
+
+**Cơ chế vật lý:**
+- **Trọng lực**: 0.8 (kéo xuống liên tục)
+- **Tốc độ rơi tối đa**: 15 (giới hạn vận tốc)
 - **Ma sát**: 0.85 (làm chậm dần khi không di chuyển)
-- **Tốc độ di chuyển**: 5 (tốc độ ngang)
+- **Nhảy**: Chỉ khi đứng trên mặt đất
 
-#### 3.2.2. Cơ chế di chuyển
-- Nhân vật chịu tác động của **trọng lực** liên tục
-- Chỉ có thể **nhảy khi đang đứng trên mặt đất**
-- Vận tốc ngang giảm dần do **ma sát** khi không nhấn phím
-- Không thể **xuyên qua tường** - phải tìm đường đi hợp lý
+### 2. Quái vật (Enemies)
 
-### 3.3. Hệ thống chiến đấu
+<table>
+<tr>
+<th>Thuộc tính</th>
+<th>Giá trị</th>
+</tr>
+<tr>
+<td>Màu sắc</td>
+<td>🔴 Đỏ</td>
+</tr>
+<tr>
+<td>Kích thước</td>
+<td>35×35 pixels</td>
+</tr>
+<tr>
+<td>HP</td>
+<td>3 (cần 3 viên đạn để tiêu diệt)</td>
+</tr>
+<tr>
+<td>Tốc độ</td>
+<td>2 pixels/frame</td>
+</tr>
+<tr>
+<td>Sát thương</td>
+<td>-10 HP/lần chạm</td>
+</tr>
+<tr>
+<td>Điểm thưởng</td>
+<td>+100 điểm khi tiêu diệt</td>
+</tr>
+</table>
 
-#### 3.3.1. Bắn đạn
-- **Hướng bắn**: Theo vị trí con trỏ chuột
-- **Tốc độ đạn**: 10
-- **Giới hạn**: Tối đa 20 viên đạn cùng lúc trên màn hình
-- **Sát thương**: 1 HP/viên đạn
-- **Tốc độ bắn**: Giới hạn 200ms/viên (5 viên/giây)
+**AI quái vật:**
+- ✅ Tuần tra tự động qua lại trên platform
+- ✅ Phát hiện tường và đổi hướng
+- ✅ Phát hiện bờ vực và tránh rơi
+- ✅ Hiển thị thanh máu phía trên đầu
 
-#### 3.3.2. Va chạm
-- **Player - Enemy**: Mất 10 HP, bị đẩy lùi
-- **Bullet - Enemy**: Quái vật mất 1 HP
-- **Player - Wall**: Không thể xuyên qua
-- **Bullet - Wall**: Đạn biến mất
+### 3. Vật phẩm
+
+#### 🔑 Chìa khóa (Keys)
+- **Màu sắc**: Vàng
+- **Số lượng**: 3 chìa/màn
+- **Điểm thưởng**: +50 điểm/chìa
+- **Chức năng**: Cần đủ 3 chìa để mở cửa
+
+#### 🚪 Cửa thoát (Door)
+- **Màu sắc**: Xám (đóng) → Xanh lá (mở)
+- **Điều kiện**: Cần 3 chìa khóa
+- **Điểm thưởng**: +200 điểm khi mở
+
+#### 💥 Đạn (Bullets)
+- **Tốc độ**: 10 pixels/frame
+- **Sát thương**: 1 HP/viên
+- **Giới hạn**: 20 viên cùng lúc
+- **Tốc độ bắn**: 5 viên/giây (200ms cooldown)
+
+### 4. Hệ thống điểm
+
+<table>
+<tr>
+<th>Hành động</th>
+<th>Điểm thưởng</th>
+</tr>
+<tr>
+<td>Tiêu diệt quái vật</td>
+<td>+100 điểm</td>
+</tr>
+<tr>
+<td>Thu thập chìa khóa</td>
+<td>+50 điểm</td>
+</tr>
+<tr>
+<td>Mở cửa thoát</td>
+<td>+200 điểm</td>
+</tr>
+</table>
+
+**Điểm tối đa mỗi màn:**
+- Tiêu diệt 6 quái: 6 × 100 = **600 điểm**
+- Thu thập 3 chìa: 3 × 50 = **150 điểm**
+- Mở cửa: 1 × 200 = **200 điểm**
+- **TỔNG**: **950 điểm/màn**
 
 ---
 
-## IV. CÁC THÀNH PHẦN TRONG GAME
+## 🗺️ CÁC MÀN CHƠI
 
-### 4.1. Nhân vật chính (Player)
+### Level 1: Khởi đầu
+- **Độ khó**: ⭐ Dễ
+- **Kích thước map**: 44×32 tiles
+- **Số quái vật**: 6 con
+- **Đặc điểm**: Map rộng, nhiều platform, dễ di chuyển
+- **Mục tiêu**: Làm quen với điều khiển và cơ chế game
 
-| Thuộc tính | Giá trị |
-|------------|---------|
-| **Màu sắc** | Xanh dương |
-| **Kích thước** | 30x40 pixels |
-| **HP ban đầu** | 100 |
-| **Tốc độ di chuyển** | 5 |
-| **Lực nhảy** | 12 |
-| **Khả năng đặc biệt** | Bắn đạn theo hướng chuột |
+### Level 2: Thử thách
+- **Độ khó**: ⭐⭐ Trung bình
+- **Kích thước map**: 44×32 tiles
+- **Số quái vật**: 8 con
+- **Đặc điểm**: Platform hẹp hơn, quái vật nhiều hơn
+- **Mục tiêu**: Cải thiện kỹ năng nhảy và bắn
 
-**Vị trí xuất phát**: Góc trái trên của map (cột 2, hàng 1)
+### Level 3: Nguy hiểm
+- **Độ khó**: ⭐⭐⭐ Khó
+- **Kích thước map**: 44×32 tiles
+- **Số quái vật**: 10 con
+- **Đặc điểm**: Nhiều bẫy, platform xa nhau
+- **Mục tiêu**: Tìm đường đi tối ưu, tránh quái vật
 
-### 4.2. Quái vật (Enemies)
+### Level 4: Địa ngục
+- **Độ khó**: ⭐⭐⭐⭐ Rất khó
+- **Kích thước map**: 44×32 tiles
+- **Số quái vật**: 12 con
+- **Đặc điểm**: Mê cung phức tạp, quái vật dày đặc
+- **Mục tiêu**: Sống sót và hoàn thành màn
 
-| Thuộc tính | Giá trị |
-|------------|---------|
-| **Màu sắc** | Đỏ |
-| **Kích thước** | 35x35 pixels |
-| **HP** | 3 |
-| **Tốc độ di chuyển** | 2 |
-| **Số lượng** | 6 con |
-| **Sát thương** | -10 HP/lần chạm |
-
-#### 4.2.1. AI quái vật
-- **Tuần tra tự động**: Di chuyển qua lại trên platform
-- **Phát hiện tường**: Đổi hướng khi va chạm tường
-- **Phát hiện bờ vực**: Đổi hướng khi gặp bờ vực (tránh rơi)
-- **Thanh máu**: Hiển thị HP còn lại phía trên đầu
-
-#### 4.2.2. Vị trí quái vật
-1. **Quái 1**: Platform hàng 3 (bên trái)
-2. **Quái 2**: Platform hàng 3 (bên phải)
-3. **Quái 3**: Platform hàng 8 (bên trái)
-4. **Quái 4**: Platform hàng 12 (giữa map)
-5. **Quái 5**: Platform hàng 20 (bên trái)
-6. **Quái 6**: Platform hàng 25 (bên phải)
-
-### 4.3. Chìa khóa (Keys)
-
-| Thuộc tính | Giá trị |
-|------------|---------|
-| **Màu sắc** | Vàng |
-| **Số lượng** | 3 chìa |
-| **Điểm thưởng** | +50 điểm/chìa |
-| **Chức năng** | Cần đủ 3 chìa để mở cửa |
-
-#### 4.3.1. Vị trí chìa khóa
-1. **Chìa 1**: Platform hàng 5 (bên trái) - Dễ
-2. **Chìa 2**: Platform hàng 15 (giữa map) - Trung bình
-3. **Chìa 3**: Platform hàng 22 (bên phải) - Khó
-
-### 4.4. Cửa thoát (Door)
-
-| Thuộc tính | Giá trị |
-|------------|---------|
-| **Màu sắc** | Xám (đóng) → Xanh lá (mở) |
-| **Vị trí** | Góc phải dưới (platform hàng 26) |
-| **Điều kiện mở** | Cần 3 chìa khóa |
-| **Điểm thưởng** | +200 điểm khi mở |
+### Level 5: Boss Final
+- **Độ khó**: ⭐⭐⭐⭐⭐ Cực khó
+- **Kích thước map**: 44×32 tiles
+- **Số quái vật**: 15 con
+- **Đặc điểm**: Màn cuối cùng, thử thách tổng hợp
+- **Mục tiêu**: Chinh phục mê cung và thoát ra
 
 ---
 
-## V. BẢN ĐỒ (MAP)
+## 💡 MẸO & CHIẾN THUẬT
 
-### 5.1. Thông số kỹ thuật
+### Mẹo chơi game
 
-| Thông số | Giá trị |
-|----------|---------|
-| **Kích thước map** | 40 cột × 28 hàng |
-| **Kích thước tile** | 25×25 pixels |
-| **Kích thước màn hình** | 1000×700 pixels |
-| **Tổng số tiles** | 1,120 tiles |
+#### 🎯 Di chuyển
+- **Nhảy liên tục**: Giữ nhịp nhảy để di chuyển nhanh hơn
+- **Tránh rơi**: Luôn kiểm tra platform phía dưới trước khi nhảy
+- **Sử dụng ma sát**: Thả phím để dừng lại chính xác
 
-### 5.2. Thiết kế map
-- **Mê cung nhiều tầng**: 9 tầng platform khác nhau
-- **Độ rộng**: Sử dụng toàn bộ 40 cột (gấp đôi so với phiên bản cũ)
-- **Độ phức tạp**: Nhiều đường đi, nhiều lựa chọn di chuyển
-- **Phân bố items**: Chìa khóa và quái vật ở các vị trí xa nhau
-- **Độ khó tăng dần**: Từ trên xuống dưới, từ trái sang phải
+#### ⚔️ Chiến đấu
+- **Bắn từ xa**: Tiêu diệt quái vật từ xa để tránh mất HP
+- **Nhắm chính xác**: Di chuyển chuột để bắn chính xác
+- **Quản lý đạn**: Tránh bắn liên tục, chờ đạn cũ biến mất
+- **Tránh va chạm**: Mỗi lần chạm quái mất 10 HP!
 
-### 5.3. Cấu trúc map
+#### 🔑 Thu thập vật phẩm
+- **Ưu tiên chìa khóa**: Thu thập chìa khóa trước khi tiêu diệt quái
+- **Ghi nhớ vị trí**: Nhớ vị trí cửa thoát để quay lại
+- **Khám phá toàn bộ**: Tìm kiếm khắp map để không bỏ sót chìa
+
+#### 🏆 Đạt điểm cao
+- **Tiêu diệt tất cả quái**: +100 điểm/con
+- **Thu thập đủ 3 chìa**: +150 điểm
+- **Hoàn thành nhanh**: Càng nhanh càng tốt
+- **Giữ HP cao**: Bonus điểm nếu HP > 80
+
+### Chiến thuật nâng cao
+
+#### 🎮 Kỹ thuật Rocket Jump
+- Bắn đạn xuống dưới khi nhảy để nhảy cao hơn
+- Hữu ích để lên platform cao
+
+#### 🏃 Speedrun
+- Bỏ qua quái vật không cần thiết
+- Tìm đường đi ngắn nhất
+- Nhảy liên tục để tăng tốc
+
+#### 🛡️ Defensive Play
+- Tiêu diệt quái vật trước khi thu thập chìa
+- Giữ khoảng cách an toàn
+- Luôn có lối thoát
+
+---
+
+## 🔧 CÔNG NGHỆ
+
+### Ngôn ngữ & Thư viện
+
+<table>
+<tr>
+<th>Công nghệ</th>
+<th>Mô tả</th>
+</tr>
+<tr>
+<td><strong>Ngôn ngữ</strong></td>
+<td>C/C++ (C++98/C++03 compatible)</td>
+</tr>
+<tr>
+<td><strong>Thư viện đồ họa</strong></td>
+<td>WinBGIM (graphics.h)</td>
+</tr>
+<tr>
+<td><strong>Compiler</strong></td>
+<td>MinGW GCC (TDM-GCC-32)</td>
+</tr>
+<tr>
+<td><strong>IDE</strong></td>
+<td>Dev-C++, Code::Blocks, VS Code</td>
+</tr>
+<tr>
+<td><strong>Platform</strong></td>
+<td>Windows 7+</td>
+</tr>
+</table>
+
+### Thuật toán đã implement
+
+#### 📐 Thuật toán vẽ đường (TP2 - 60%)
+- **Bresenham Line Algorithm**: Vẽ đường thẳng
+- **Midpoint Circle Algorithm**: Vẽ đường tròn
+- **Midpoint Ellipse Algorithm**: Vẽ ellipse
+- **Flood Fill Algorithm**: Tô màu đa giác đệ quy
+
+#### 🌿 Thuật toán Fractal (TP3 - 20%)
+- **Koch Curve**: Đường cong Koch (tuyết)
+- **Dragon Curve**: Đường cong rồng
+- **Sierpinski Triangle**: Tam giác Sierpinski
+
+#### 🔄 Phép biến đổi 2D (TP4 - 20%)
+- **Translation**: Tịnh tiến
+- **Rotation**: Xoay
+- **Scaling**: Co giãn
+- **Reflection**: Đối xứng
+
+### Cấu trúc code
+
 ```
-Hàng 0:    Tường trên (biên giới)
-Hàng 1-2:  Khu vực xuất phát
-Hàng 3:    Platform tầng 1 (4 đoạn)
-Hàng 5:    Platform tầng 2 (3 đoạn dài)
-Hàng 8:    Platform tầng 3 (4 đoạn)
-Hàng 10:   Platform tầng 4 (4 đoạn nhỏ)
-Hàng 12:   Platform tầng 5 (5 đoạn)
-Hàng 15:   Platform tầng 6 (4 đoạn)
-Hàng 17:   Platform tầng 7 (4 đoạn)
-Hàng 20:   Platform tầng 8 (4 đoạn)
-Hàng 22:   Platform tầng 9 (4 đoạn)
-Hàng 25:   Platform tầng dưới (4 đoạn)
-Hàng 27:   Tường dưới (sàn)
-```
-
----
-
-## VI. HỆ THỐNG ĐIỂM
-
-### 6.1. Bảng điểm thưởng
-
-| Hành động | Điểm thưởng |
-|-----------|-------------|
-| Tiêu diệt quái vật | **+100** |
-| Thu thập chìa khóa | **+50** |
-| Mở cửa thoát | **+200** |
-
-### 6.2. Điểm tối đa
-- **Tiêu diệt 6 quái**: 6 × 100 = 600 điểm
-- **Thu thập 3 chìa**: 3 × 50 = 150 điểm
-- **Mở cửa**: 1 × 200 = 200 điểm
-- **TỔNG ĐIỂM TỐI ĐA**: **950 điểm**
-
----
-
-## VII. ĐIỀU KIỆN THẮNG/THUA
-
-### 7.1. Điều kiện thắng
-✅ Thu thập đủ **3 chìa khóa**  
-✅ Đến **cửa thoát** ở góc phải dưới  
-✅ Mở cửa thành công  
-
-→ **Màn hình "YOU WIN!"** hiển thị với điểm số đạt được
-
-### 7.2. Điều kiện thua
-❌ HP giảm xuống **0** (do bị quái vật tấn công nhiều lần)  
-
-→ **Màn hình "GAME OVER!"** hiển thị với điểm số đạt được
-
----
-
-## VIII. CÔNG NGHỆ SỬ DỤNG
-
-### 8.1. Ngôn ngữ & Thư viện
-
-| Công nghệ | Mô tả |
-|-----------|-------|
-| **Ngôn ngữ** | C/C++ |
-| **Thư viện đồ họa** | graphics.h / WinBGIM |
-| **IDE** | Dev-C++ / Code::Blocks |
-| **Hệ điều hành** | Windows 7 trở lên |
-| **Compiler** | MinGW GCC |
-
-### 8.2. Cấu trúc code
-
-```
-main.cpp (749 dòng)
-├── Định nghĩa hằng số (40 dòng)
-│   ├── Cấu hình màn hình
-│   ├── Thông số nhân vật
-│   ├── Thông số đạn
-│   ├── Thông số quái vật
-│   └── Thông số bản đồ
+src/
+├── main.cpp              # Entry point, game loop
+├── config.h              # Cấu hình game
 │
-├── Cấu trúc dữ liệu (50 dòng)
-│   ├── struct Player
-│   ├── struct Bullet
-│   ├── struct Enemy
-│   ├── struct Key
-│   └── struct Door
+├── core/                 # Core systems
+│   ├── algorithms.h      # Bresenham, Midpoint, Flood Fill
+│   ├── blocks.h          # Tile rendering
+│   ├── decorations.h     # Fractal decorations
+│   ├── doublebuffer.h    # Double buffering
+│   └── primitives.h      # Basic shapes
 │
-├── Biến toàn cục (50 dòng)
-│   ├── Player player
-│   ├── Bullet bullets[20]
-│   ├── Enemy enemies[10]
-│   ├── Key keys[3]
-│   ├── Door doors[3]
-│   └── int map[28][40]
+├── entities/             # Game entities
+│   ├── Player.h          # Player logic
+│   ├── Enemy.h           # Enemy AI
+│   └── Items.h           # Keys, doors
 │
-├── Hàm khởi tạo (120 dòng)
-│   ├── initGame()
-│   ├── initPlayer()
-│   ├── initBullets()
-│   ├── initEnemies()
-│   ├── initKeys()
-│   └── initDoors()
+├── graphics/             # Graphics & UI
+│   ├── Menu.h/.cpp       # Menu system
+│   └── CustomDrawing.h   # Custom drawing functions
 │
-├── Hàm cập nhật logic (180 dòng)
-│   ├── updatePlayer()
-│   ├── updateBullets()
-│   ├── updateEnemies()
-│   └── checkCollisions()
+├── levels/               # Level logic
+│   ├── Level1.h          # Level 1 gameplay
+│   ├── Level2.h          # Level 2 gameplay
+│   ├── Level3.h          # Level 3 gameplay
+│   ├── Level4.h          # Level 4 gameplay
+│   ├── Level5.h          # Level 5 gameplay
+│   └── LevelCommon.h     # Shared utilities
 │
-├── Hàm vẽ đồ họa (150 dòng)
-│   ├── drawMap()
-│   ├── drawPlayer()
-│   ├── drawBullets()
-│   ├── drawEnemies()
-│   ├── drawKeys()
-│   ├── drawDoors()
-│   └── drawUI()
+├── map/                  # Map data
+│   ├── Level1.h          # Level 1 map
+│   ├── Level2.h          # Level 2 map
+│   ├── Level3.h          # Level 3 map
+│   ├── Level4.h          # Level 4 map
+│   └── Level5.h          # Level 5 map
 │
-├── Hàm xử lý input (80 dòng)
-│   ├── handleInput()
-│   ├── shootBullet()
-│   └── checkMapCollision()
-│
-└── Game loop chính (80 dòng)
-    └── main()
+└── utils/                # Utilities
+    └── ShootingSystem.h  # Bullet system
 ```
 
-### 8.3. Thuật toán chính
+### Tính năng kỹ thuật
 
-#### 8.3.1. Collision Detection (Phát hiện va chạm)
-```
-Thuật toán: Kiểm tra 4 góc của hình chữ nhật
-- Input: Tọa độ (x, y), kích thước (w, h)
-- Output: True nếu va chạm, False nếu không
-- Độ phức tạp: O(1)
-```
+#### ✨ Vật lý thực tế
+- Mô phỏng trọng lực chính xác
+- Giới hạn tốc độ rơi tự nhiên
+- Ma sát làm chậm dần chuyển động
+- Nhảy có độ cao và thời gian thực tế
 
-#### 8.3.2. AI Enemy (Trí tuệ nhân tạo quái vật)
-```
-Thuật toán: Patrol với phát hiện tường và bờ vực
-1. Di chuyển theo hướng hiện tại
-2. Kiểm tra va chạm tường → Đổi hướng
-3. Kiểm tra bờ vực phía trước → Đổi hướng
-4. Lặp lại
-- Độ phức tạp: O(1) mỗi frame
-```
+#### 🎯 Va chạm chính xác
+- Kiểm tra 4 góc của hitbox
+- Phân biệt va chạm ngang và dọc
+- Xử lý va chạm đa đối tượng
+- Không có bug xuyên tường
 
-#### 8.3.3. Bullet Trajectory (Quỹ đạo đạn)
-```
-Thuật toán: Vector hóa hướng bắn
-1. Tính vector từ player đến chuột: (dx, dy)
-2. Chuẩn hóa vector: (dx/distance, dy/distance)
-3. Nhân với tốc độ đạn: velocity = normalized * speed
-4. Cập nhật vị trí mỗi frame: pos += velocity
-- Độ phức tạp: O(1)
-```
+#### 🤖 AI quái vật thông minh
+- Tuần tra tự động không cần input
+- Tránh rơi xuống bờ vực
+- Đổi hướng khi gặp chướng ngại
+- Hiển thị thanh máu trực quan
+
+#### 🎨 Đồ họa tự vẽ
+- Tất cả hình vẽ sử dụng thuật toán tự implement
+- Không dùng hàm vẽ có sẵn của BGI
+- Áp dụng Bresenham, Midpoint, Flood Fill
+- Hiệu ứng fractal trang trí
 
 ---
 
-## IX. TÍNH NĂNG KỸ THUẬT NỔI BẬT
+## 👥 CREDITS
 
-### 9.1. Hệ thống vật lý thực tế
-- ✅ Mô phỏng trọng lực chính xác
-- ✅ Giới hạn tốc độ rơi tự nhiên
-- ✅ Ma sát làm chậm dần chuyển động
-- ✅ Nhảy có độ cao và thời gian thực tế
+### Đội ngũ phát triển
+**Escape The Labyrinth Team**
 
-### 9.2. Va chạm chính xác
-- ✅ Kiểm tra 4 góc của hitbox
-- ✅ Phân biệt va chạm ngang và dọc
-- ✅ Xử lý va chạm đa đối tượng
-- ✅ Không có bug xuyên tường
+### Công nghệ
+- **WinBGIM**: Thư viện đồ họa
+- **MinGW GCC**: Compiler
+- **C/C++**: Ngôn ngữ lập trình
 
-### 9.3. AI quái vật thông minh
-- ✅ Tuần tra tự động không cần input
-- ✅ Tránh rơi xuống bờ vực
-- ✅ Đổi hướng khi gặp chướng ngại
-- ✅ Hiển thị thanh máu trực quan
+### Tài liệu tham khảo
+- Bresenham, J. E. (1965). "Algorithm for computer control of a digital plotter"
+- Midpoint Circle Algorithm
+- Flood Fill Algorithm
+- Koch Curve, Dragon Curve
+- 2D Transformations
 
-### 9.4. Giao diện người dùng
-- ✅ UI bar hiển thị thông tin real-time
-- ✅ Thanh HP, số chìa khóa, điểm số
-- ✅ Hướng dẫn điều khiển trên màn hình
-- ✅ Màn hình thắng/thua rõ ràng
+### Học phần
+- **Môn học**: Tin Học Đồ Họa Máy Tính
+- **Năm học**: 2026
+- **Mục đích**: Đồ án cuối kỳ
 
 ---
 
-## X. KIẾN THỨC ÁP DỤNG
+## 📞 HỖ TRỢ
 
-### 10.1. Lập trình C/C++
-- ✅ Cấu trúc dữ liệu (struct)
-- ✅ Mảng 1 chiều và 2 chiều
-- ✅ Vòng lặp và câu lệnh điều kiện
-- ✅ Hàm và module hóa code
-- ✅ Con trỏ và tham chiếu
+### Báo lỗi
+Nếu gặp lỗi, vui lòng tạo issue trên GitHub với thông tin:
+- Mô tả lỗi
+- Các bước tái hiện
+- Screenshot (nếu có)
+- Thông tin hệ thống
 
-### 10.2. Đồ họa máy tính
-- ✅ Vẽ hình cơ bản (rectangle, circle, line)
-- ✅ Tô màu và fill pattern
-- ✅ Hệ tọa độ 2D
-- ✅ Double buffering (cleardevice)
-- ✅ Xử lý màu sắc
-
-### 10.3. Game Development
-- ✅ Game loop cơ bản
-- ✅ FPS control (delay)
-- ✅ Input handling (keyboard, mouse)
-- ✅ Collision detection
-- ✅ Game state management
-
-### 10.4. Thuật toán
-- ✅ Tính khoảng cách Euclidean
-- ✅ Vector và chuẩn hóa vector
-- ✅ Pathfinding đơn giản (AI)
-- ✅ Quản lý object pool (bullets)
+### Đóng góp
+Mọi đóng góp đều được hoan nghênh! Vui lòng:
+1. Fork repository
+2. Tạo branch mới
+3. Commit changes
+4. Push và tạo Pull Request
 
 ---
 
-## XI. HƯỚNG PHÁT TRIỂN
+## 📜 LICENSE
 
-### 11.1. Tính năng có thể thêm
-- [ ] **Nhiều level**: Thiết kế 5-10 màn chơi khác nhau
-- [ ] **Hệ thống vũ khí**: Súng máy, rocket launcher, laser
-- [ ] **Power-ups**: Tăng tốc, bất tử, tăng sát thương
-- [ ] **Boss fight**: Quái vật khổng lồ cuối màn
-- [ ] **Lưu/Load game**: Checkpoint system
-- [ ] **Bảng xếp hạng**: High score table
-- [ ] **Âm thanh**: Nhạc nền và sound effects
-- [ ] **Animation**: Sprite sheets cho nhân vật
-- [ ] **Nhiều loại quái**: Flying enemy, shooting enemy
-- [ ] **Nhiệm vụ phụ**: Bonus objectives
+© 2026 - Escape The Labyrinth. All rights reserved.
 
-### 11.2. Cải tiến kỹ thuật
-- [ ] **Tối ưu collision**: Spatial partitioning
-- [ ] **Particle effects**: Explosion, dust, blood
-- [ ] **Camera follow**: Smooth camera tracking player
-- [ ] **Parallax scrolling**: Background layers
-- [ ] **Sprite animation**: Frame-based animation
-- [ ] **Config file**: JSON/XML settings
-- [ ] **Map editor**: Tool để thiết kế map
-- [ ] **Networking**: Multiplayer mode
+Dự án được phát triển cho mục đích học tập.
 
 ---
 
-## XII. KẾT LUẬN
+<div align="center">
 
-### 12.1. Ưu điểm
-✅ **Code rõ ràng**: Dễ đọc, dễ hiểu, có comment đầy đủ  
-✅ **Gameplay hấp dẫn**: Kết hợp nhiều yếu tố: parkour, combat, puzzle  
-✅ **Vật lý thực tế**: Mô phỏng chuyển động tự nhiên  
-✅ **Map rộng lớn**: 40×28 tiles, nhiều tầng, nhiều thử thách  
-✅ **AI thông minh**: Quái vật có hành vi tự động hợp lý  
-✅ **Mở rộng dễ dàng**: Cấu trúc code module, dễ thêm tính năng  
+**🎮 CHÚC BẠN CHƠI GAME VUI VẺ! 🎮**
 
-### 12.2. Ứng dụng học tập
-Game này phù hợp cho:
-- 📚 Đồ án môn **Lập trình C/C++**
-- 📚 Đồ án môn **Kỹ thuật lập trình**
-- 📚 Đồ án môn **Đồ họa máy tính**
-- 📚 Đồ án môn **Cấu trúc dữ liệu và giải thuật**
-- 📚 Học về **Game Development** cơ bản
-- 📚 Thực hành **Lập trình hướng đối tượng**
+*Nếu thích game, đừng quên cho ⭐ trên GitHub!*
 
-### 12.3. Đánh giá
-Game Parkour 2D là một dự án hoàn chỉnh, thể hiện được kiến thức toàn diện về lập trình C/C++, đồ họa máy tính và game development. Với map rộng gấp đôi, 6 quái vật, 3 chìa khóa và hệ thống vật lý thực tế, game mang lại trải nghiệm chơi thú vị và đầy thử thách.
-
----
-
-**Phát triển bởi**: [Tên sinh viên]  
-**MSSV**: [Mã số sinh viên]  
-**Lớp**: [Lớp học]  
-**Môn học**: Lập trình C/C++  
-**Năm học**: 2024-2025  
-**Ngày hoàn thành**: 27/01/2026
-
----
-
-© 2026 - Game Parkour 2D. All rights reserved.
+</div>

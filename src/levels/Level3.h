@@ -174,13 +174,20 @@ static void runGameLevel3() {
 
             // ====== Cập nhật enemy và đạn (quái) ======
             for (int i = 0; i < MAX_ENEMIES; ++i)
-                updateEnemy(enemies[i], bullets, MAX_BULLETS);
+                updateEnemy(enemies[i], bullets, MAX_BULLETS, player, isSolidTileLevel3);
             for (int i = 0; i < MAX_BULLETS; ++i)
                 updateBullet(bullets[i]);
 
             // Kiểm tra đạn quái trúng player (dùng hệ thống HP)
             if (checkEnemyBulletsHitPlayer(bullets, MAX_BULLETS, player)) {
                 playerDead = true;
+            }
+
+            // Nếu hết HP -> hiện end screen
+            if (playerDead) {
+                EndAction action = showEndScreen(3, false);
+                if (action == END_RESTART) { initLevel3(); wasJumpDown = false; continue; }
+                currentState = MENU; running = false; break;
             }
 
             // ====== Bắn đạn: Sử dụng hệ thống bắn đạn chung ======
@@ -213,8 +220,8 @@ static void runGameLevel3() {
 
         beginFrame();
         
-        // Background giống menu
-        drawLabyrinthBackground();
+        // Background Level 3: Sa mạc
+        drawLevel3Background();
         drawStars();
         
         drawLevel3();

@@ -272,13 +272,27 @@ static void runGameLevel2() {
 
             // ====== Cập nhật enemy và đạn (quái) ======
             for (int i = 0; i < MAX_ENEMIES; ++i)
-                updateEnemy(enemies[i], bullets, MAX_BULLETS);
+                updateEnemy(enemies[i], bullets, MAX_BULLETS, player, isSolidTileLevel2);
             for (int i = 0; i < MAX_BULLETS; ++i)
                 updateBullet(bullets[i]);
 
             // Kiểm tra đạn quái trúng player (dùng hệ thống HP)
             if (checkEnemyBulletsHitPlayer(bullets, MAX_BULLETS, player)) {
                 playerDead = true;
+            }
+
+            // Nếu hết HP -> hiện end screen
+            if (playerDead) {
+                EndAction action = showEndScreen(2, false);
+                if (action == END_RESTART) {
+                    initLevel2();
+                    wasJumpDown = false;
+                    continue;
+                } else {
+                    currentState = MENU;
+                    running = false;
+                    break;
+                }
             }
 
             // ====== Bắn đạn: Sử dụng hệ thống bắn đạn chung ======
@@ -336,8 +350,8 @@ static void runGameLevel2() {
         // ====== Vẽ frame ======
         beginFrame();
 
-        // Background giống menu
-        drawLabyrinthBackground();
+        // Background Level 2: Hang động
+        drawLevel2Background();
         drawStars();
 
         drawLevel2();

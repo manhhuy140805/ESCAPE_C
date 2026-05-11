@@ -14,7 +14,7 @@ static void beginFrame() {
     DB_CURRENT_PAGE = 1 - DB_CURRENT_PAGE;
     setactivepage(DB_CURRENT_PAGE);
     setvisualpage(1 - DB_CURRENT_PAGE);
-    cleardevice();
+    cleardevice(); // phải clear để không bị chồng
 }
 
 static void endFrame() {

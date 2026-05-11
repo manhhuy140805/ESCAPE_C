@@ -36,6 +36,8 @@ struct Enemy {
     // Di chuyển
     bool  canMove;       // Có thể di chuyển không
     float vx;            // Vận tốc ngang
+    float vy;            // Vận tốc dọc (cho gravity)
+    bool  onGround;      // Đang đứng trên mặt đất
     int   moveRange;     // Phạm vi di chuyển (pixels)
     int   startX;        // Vị trí xuất phát
 };
@@ -66,6 +68,8 @@ static Enemy makeEnemy(int x, int y, bool facingRight, int cooldown = 90,
     e.active = true;
     e.canMove = canMove;
     e.vx = canMove ? 2.0f : 0.0f;
+    e.vy = 0.0f;           // Khởi tạo vận tốc dọc
+    e.onGround = false;    // Khởi tạo trạng thái đất
     e.moveRange = moveRange;
     e.startX = x;
     return e;
@@ -154,42 +158,131 @@ static void drawBullet(const Bullet& b) {
 }
 
 // ============================================================
-//  Update enemy (bắn đạn khi đến lượt + di chuyển)
+//  Update enemy (bắn đạn khi đến lượt + di chuyển + va chạm map)
 //  bullets[]: mảng đạn toàn cục
 //  numBullets: số phần tử trong mảng
+//  player: tham chiếu đến player để tính hướng bắn
+//  isSolidTile: hàm kiểm tra tile rắn (truyền từ level)
 // ============================================================
-static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets) {
+static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets, 
+                       const Player& player,
+                       bool (*isSolidTile)(int row, int col)) {
     if (!e.active) return;
     
-    // Di chuyển qua lại
-    if (e.canMove) {
-        e.x += static_cast<int>(e.vx);
+    // ====== VA CHẠM VỚI MAP (giống player) ======
+    // Trọng lực
+    e.vy += GAME_GRAVITY;
+    if (e.vy > GAME_MAX_FALL_SPEED) e.vy = GAME_MAX_FALL_SPEED;
+    
+    int halfW = e.width / 2;
+    int fullH = e.height;
+    
+    // Va chạm trục Y (rơi xuống)
+    float newYf = e.y + e.vy;
+    int leftX = e.x - halfW;
+    int rightX = e.x + halfW - 1;
+    e.onGround = false;
+    
+    if (e.vy > 0.0f) { // rơi xuống
+        int bottom = static_cast<int>(newYf);
+        int row = bottom / TILE_SIZE;
+        int colStart = leftX / TILE_SIZE;
+        int colEnd = rightX / TILE_SIZE;
+        bool hit = false;
+        for (int c = colStart; c <= colEnd; ++c) {
+            if (isSolidTile(row, c)) { hit = true; break; }
+        }
+        if (hit) {
+            newYf = row * TILE_SIZE;
+            e.vy = 0.0f;
+            e.onGround = true;
+        }
+    } else if (e.vy < 0.0f) { // nhảy lên (va chạm trần)
+        int top = static_cast<int>(newYf) - fullH;
+        int row = top / TILE_SIZE;
+        int colStart = leftX / TILE_SIZE;
+        int colEnd = rightX / TILE_SIZE;
+        bool hit = false;
+        for (int c = colStart; c <= colEnd; ++c) {
+            if (isSolidTile(row, c)) { hit = true; break; }
+        }
+        if (hit) {
+            newYf = (row + 1) * TILE_SIZE + fullH;
+            e.vy = 0.0f;
+        }
+    }
+    e.y = static_cast<int>(newYf);
+    
+    // ====== DI CHUYỂN NGANG (với va chạm) ======
+    if (e.canMove && e.onGround) { // Chỉ di chuyển khi đứng trên đất
+        float newXf = e.x + e.vx;
+        int topY = e.y - fullH;
+        int bottomY = e.y - 1;
         
-        // Đảo chiều khi ra khỏi phạm vi
-        if (e.x > e.startX + e.moveRange) {
-            e.x = e.startX + e.moveRange;
+        // Kiểm tra va chạm tường
+        bool hitWall = false;
+        if (e.vx > 0.0f) {
+            int right = static_cast<int>(newXf) + halfW;
+            int col = right / TILE_SIZE;
+            for (int r = topY / TILE_SIZE; r <= bottomY / TILE_SIZE; ++r) {
+                if (isSolidTile(r, col)) { hitWall = true; break; }
+            }
+        } else if (e.vx < 0.0f) {
+            int left = static_cast<int>(newXf) - halfW;
+            int col = left / TILE_SIZE;
+            for (int r = topY / TILE_SIZE; r <= bottomY / TILE_SIZE; ++r) {
+                if (isSolidTile(r, col)) { hitWall = true; break; }
+            }
+        }
+        
+        // Kiểm tra biên màn hình
+        if (newXf < halfW || newXf > SCREEN_WIDTH - halfW) {
+            hitWall = true;
+        }
+        
+        // Kiểm tra phạm vi di chuyển
+        if (newXf > e.startX + e.moveRange || newXf < e.startX - e.moveRange) {
+            hitWall = true;
+        }
+        
+        // Đảo chiều nếu va chạm
+        if (hitWall) {
             e.vx = -e.vx;
-            e.facingRight = false;
-        } else if (e.x < e.startX - e.moveRange) {
-            e.x = e.startX - e.moveRange;
-            e.vx = -e.vx;
-            e.facingRight = true;
+            e.facingRight = (e.vx > 0);
+        } else {
+            e.x = static_cast<int>(newXf);
         }
     }
     
-    // Bắn đạn
+    // ====== BẮN ĐẠN CHÉO THEO HƯỚNG PLAYER ======
     e.shootTimer--;
     if (e.shootTimer <= 0) {
         e.shootTimer = e.shootCooldown;
 
-        // Tìm slot đạn rảnh
+        // Tính hướng từ enemy đến player
+        int originX = e.x;
+        int originY = e.y - e.height / 2;
+        int targetX = player.x;
+        int targetY = player.y - player.height / 2;
+        
+        float dx = (float)(targetX - originX);
+        float dy = (float)(targetY - originY);
+        float len = sqrtf(dx * dx + dy * dy);
+        if (len < 1.0f) len = 1.0f;
+        dx /= len;
+        dy /= len;
+        
+        // Cập nhật hướng nhìn enemy
+        e.facingRight = (targetX >= originX);
+
+        // Tìm slot đạn rảnh và bắn theo hướng player
         for (int i = 0; i < numBullets; ++i) {
             if (!bullets[i].active) {
                 bullets[i].active = true;
-                bullets[i].x = static_cast<float>(e.x);
-                bullets[i].y = static_cast<float>(e.y - e.height / 2);
-                bullets[i].vx = e.facingRight ? BULLET_SPEED : -BULLET_SPEED;
-                bullets[i].vy = 0.0f;
+                bullets[i].x = static_cast<float>(originX);
+                bullets[i].y = static_cast<float>(originY);
+                bullets[i].vx = dx * BULLET_SPEED;
+                bullets[i].vy = dy * BULLET_SPEED;
                 break;
             }
         }

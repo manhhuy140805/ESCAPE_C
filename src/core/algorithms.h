@@ -4,6 +4,11 @@
 #include <graphics.h>
 #include <cmath>
 
+// Hằng số PI
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // thuật toán bresenham vẽ đường thẳng
 static void bresenhamLine(int x1, int y1, int x2, int y2, int color) {
     int dx = abs(x2 - x1);
@@ -163,6 +168,192 @@ static void filledMidpointCircle(int xc, int yc, int radius, int color) {
         bresenhamLine(xc - y, yc + x, xc + y, yc + x, color);
         bresenhamLine(xc - y, yc - x, xc + y, yc - x, color);
     }
+}
+
+// ============================================================================
+// THUẬT TOÁN TÔ MÀU ĐA GIÁC ĐỆ QUY (FLOOD FILL)
+// ============================================================================
+
+/**
+ * Thuật toán Flood Fill đệ quy - Tô màu vùng kín
+ * 
+ * Nguyên lý:
+ * 1. Bắt đầu từ điểm seed (x, y)
+ * 2. Kiểm tra màu hiện tại tại điểm đó
+ * 3. Nếu màu hiện tại == màu cũ (oldColor) và != màu mới (fillColor):
+ *    - Tô điểm hiện tại bằng màu mới
+ *    - Đệ quy sang 4 điểm lân cận (trên, dưới, trái, phải)
+ * 4. Dừng khi gặp biên (màu khác oldColor) hoặc đã tô (màu == fillColor)
+ * 
+ * Ưu điểm: Đơn giản, dễ hiểu, tô chính xác vùng kín
+ * Nhược điểm: Có thể gây stack overflow với vùng lớn
+ * 
+ * @param x, y: Tọa độ điểm bắt đầu (seed point)
+ * @param fillColor: Màu tô mới
+ * @param oldColor: Màu cũ cần thay thế
+ */
+static void floodFillRecursive(int x, int y, int fillColor, int oldColor) {
+    // Điều kiện dừng: nằm ngoài màn hình
+    if (x < 0 || x >= getmaxx() || y < 0 || y >= getmaxy()) {
+        return;
+    }
+    
+    // Lấy màu hiện tại tại điểm (x, y)
+    int currentColor = getpixel(x, y);
+    
+    // Điều kiện dừng: màu hiện tại không phải màu cũ hoặc đã được tô
+    if (currentColor != oldColor || currentColor == fillColor) {
+        return;
+    }
+    
+    // Tô điểm hiện tại
+    putpixel(x, y, fillColor);
+    
+    // Đệ quy sang 4 điểm lân cận (4-connected)
+    floodFillRecursive(x + 1, y, fillColor, oldColor); // Phải
+    floodFillRecursive(x - 1, y, fillColor, oldColor); // Trái
+    floodFillRecursive(x, y + 1, fillColor, oldColor); // Dưới
+    floodFillRecursive(x, y - 1, fillColor, oldColor); // Trên
+}
+
+/**
+ * Hàm wrapper cho Flood Fill - Tự động lấy màu cũ
+ * 
+ * @param x, y: Tọa độ điểm bắt đầu
+ * @param fillColor: Màu tô mới
+ */
+static void floodFill(int x, int y, int fillColor) {
+    // Kiểm tra tọa độ hợp lệ
+    if (x < 0 || x >= getmaxx() || y < 0 || y >= getmaxy()) {
+        return;
+    }
+    
+    // Lấy màu cũ tại điểm seed
+    int oldColor = getpixel(x, y);
+    
+    // Nếu màu cũ == màu mới thì không cần tô
+    if (oldColor == fillColor) {
+        return;
+    }
+    
+    // Gọi hàm đệ quy
+    floodFillRecursive(x, y, fillColor, oldColor);
+}
+
+/**
+ * Flood Fill 8-connected (tô cả 8 hướng kể cả đường chéo)
+ * 
+ * Khác với 4-connected, thuật toán này tô cả 8 điểm lân cận:
+ * - 4 điểm trực tiếp (trên, dưới, trái, phải)
+ * - 4 điểm chéo (trên-trái, trên-phải, dưới-trái, dưới-phải)
+ * 
+ * @param x, y: Tọa độ điểm bắt đầu
+ * @param fillColor: Màu tô mới
+ * @param oldColor: Màu cũ cần thay thế
+ */
+static void floodFill8Recursive(int x, int y, int fillColor, int oldColor) {
+    // Điều kiện dừng: nằm ngoài màn hình
+    if (x < 0 || x >= getmaxx() || y < 0 || y >= getmaxy()) {
+        return;
+    }
+    
+    // Lấy màu hiện tại
+    int currentColor = getpixel(x, y);
+    
+    // Điều kiện dừng
+    if (currentColor != oldColor || currentColor == fillColor) {
+        return;
+    }
+    
+    // Tô điểm hiện tại
+    putpixel(x, y, fillColor);
+    
+    // Đệ quy sang 8 điểm lân cận (8-connected)
+    floodFill8Recursive(x + 1, y, fillColor, oldColor);     // Phải
+    floodFill8Recursive(x - 1, y, fillColor, oldColor);     // Trái
+    floodFill8Recursive(x, y + 1, fillColor, oldColor);     // Dưới
+    floodFill8Recursive(x, y - 1, fillColor, oldColor);     // Trên
+    floodFill8Recursive(x + 1, y + 1, fillColor, oldColor); // Phải-Dưới
+    floodFill8Recursive(x + 1, y - 1, fillColor, oldColor); // Phải-Trên
+    floodFill8Recursive(x - 1, y + 1, fillColor, oldColor); // Trái-Dưới
+    floodFill8Recursive(x - 1, y - 1, fillColor, oldColor); // Trái-Trên
+}
+
+/**
+ * Hàm wrapper cho Flood Fill 8-connected
+ */
+static void floodFill8(int x, int y, int fillColor) {
+    if (x < 0 || x >= getmaxx() || y < 0 || y >= getmaxy()) {
+        return;
+    }
+    
+    int oldColor = getpixel(x, y);
+    
+    if (oldColor == fillColor) {
+        return;
+    }
+    
+    floodFill8Recursive(x, y, fillColor, oldColor);
+}
+
+/**
+ * Tô màu hình chữ nhật (sử dụng flood fill)
+ * 
+ * @param x1, y1: Góc trên trái
+ * @param x2, y2: Góc dưới phải
+ * @param borderColor: Màu viền
+ * @param fillColor: Màu tô
+ */
+static void filledRectangle(int x1, int y1, int x2, int y2, int borderColor, int fillColor) {
+    // Vẽ viền
+    bresenhamRectangle(x1, y1, x2, y2, borderColor);
+    
+    // Tô màu bên trong (điểm seed ở giữa hình chữ nhật)
+    int centerX = (x1 + x2) / 2;
+    int centerY = (y1 + y2) / 2;
+    floodFill(centerX, centerY, fillColor);
+}
+
+/**
+ * Tô màu tam giác (sử dụng flood fill)
+ * 
+ * @param x1, y1, x2, y2, x3, y3: 3 đỉnh tam giác
+ * @param borderColor: Màu viền
+ * @param fillColor: Màu tô
+ */
+static void filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3, int borderColor, int fillColor) {
+    // Vẽ viền
+    bresenhamTriangle(x1, y1, x2, y2, x3, y3, borderColor);
+    
+    // Tô màu bên trong (điểm seed ở trọng tâm tam giác)
+    int centerX = (x1 + x2 + x3) / 3;
+    int centerY = (y1 + y2 + y3) / 3;
+    floodFill(centerX, centerY, fillColor);
+}
+
+/**
+ * Tô màu đa giác bất kỳ (sử dụng flood fill)
+ * 
+ * @param points: Mảng các điểm đỉnh (x1, y1, x2, y2, ...)
+ * @param numPoints: Số lượng đỉnh
+ * @param borderColor: Màu viền
+ * @param fillColor: Màu tô
+ * @param seedX, seedY: Điểm seed để bắt đầu tô (phải nằm trong đa giác)
+ */
+static void filledPolygon(int points[], int numPoints, int borderColor, int fillColor, int seedX, int seedY) {
+    // Vẽ viền đa giác
+    for (int i = 0; i < numPoints - 1; i++) {
+        bresenhamLine(points[i * 2], points[i * 2 + 1], 
+                     points[(i + 1) * 2], points[(i + 1) * 2 + 1], 
+                     borderColor);
+    }
+    // Đóng đa giác (nối điểm cuối với điểm đầu)
+    bresenhamLine(points[(numPoints - 1) * 2], points[(numPoints - 1) * 2 + 1],
+                 points[0], points[1], 
+                 borderColor);
+    
+    // Tô màu bên trong
+    floodFill(seedX, seedY, fillColor);
 }
 
 #endif // ALGORITHMS_H

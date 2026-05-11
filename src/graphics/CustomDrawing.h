@@ -204,4 +204,249 @@ static void drawCustomMazeBackground() {
     }
 }
 
+// ============================================================
+//  ÁP DỤNG THUẬT TOÁN FLOOD FILL VÀO GAME
+//  Sử dụng thuật toán tô màu đệ quy đã tự cài đặt
+// ============================================================
+
+/**
+ * Vẽ nhân vật với tô màu Flood Fill
+ * Tô màu đầy đủ các phần của nhân vật
+ */
+static void drawFilledPlayer(int x, int y, bool facingRight) {
+    // Đầu - vẽ viền và tô màu
+    midpointCircle(x, y - 24, 8, COLOR(100, 50, 0));
+    floodFill(x, y - 24, COLOR(255, 220, 180));
+    
+    // Thân - vẽ hình chữ nhật và tô màu
+    bresenhamRectangle(x - 6, y - 16, x + 6, y - 8, COLOR(0, 100, 0));
+    floodFill(x, y - 12, COLOR(40, 150, 60));
+    
+    // Tay trái
+    int armPoints1[] = {
+        x - 6, y - 14,
+        x - 10, y - 10,
+        x - 8, y - 8,
+        x - 4, y - 12
+    };
+    filledPolygon(armPoints1, 4, COLOR(100, 50, 0), COLOR(255, 220, 180), x - 7, y - 11);
+    
+    // Tay phải
+    int armPoints2[] = {
+        x + 6, y - 14,
+        x + 10, y - 10,
+        x + 8, y - 8,
+        x + 4, y - 12
+    };
+    filledPolygon(armPoints2, 4, COLOR(100, 50, 0), COLOR(255, 220, 180), x + 7, y - 11);
+    
+    // Chân trái
+    int legPoints1[] = {
+        x - 2, y - 8,
+        x - 6, y,
+        x - 4, y,
+        x, y - 8
+    };
+    filledPolygon(legPoints1, 4, COLOR(0, 0, 100), COLOR(30, 40, 80), x - 3, y - 4);
+    
+    // Chân phải
+    int legPoints2[] = {
+        x + 2, y - 8,
+        x + 6, y,
+        x + 4, y,
+        x, y - 8
+    };
+    filledPolygon(legPoints2, 4, COLOR(0, 0, 100), COLOR(30, 40, 80), x + 3, y - 4);
+    
+    // Mắt
+    if (facingRight) {
+        filledMidpointCircle(x + 3, y - 24, 2, COLOR(0, 0, 0));
+    } else {
+        filledMidpointCircle(x - 3, y - 24, 2, COLOR(0, 0, 0));
+    }
+}
+
+/**
+ * Vẽ enemy với tô màu Flood Fill
+ */
+static void drawFilledEnemy(int x, int y, bool facingRight) {
+    // Đầu - màu đỏ
+    midpointCircle(x, y - 24, 8, COLOR(100, 0, 0));
+    floodFill(x, y - 24, COLOR(180, 30, 30));
+    
+    // Thân - màu xám
+    bresenhamRectangle(x - 6, y - 16, x + 6, y - 8, COLOR(50, 50, 50));
+    floodFill(x, y - 12, COLOR(80, 80, 90));
+    
+    // Tay với vũ khí
+    if (facingRight) {
+        int armPoints[] = {
+            x, y - 14,
+            x + 8, y - 12,
+            x + 8, y - 10,
+            x, y - 12
+        };
+        filledPolygon(armPoints, 4, COLOR(100, 0, 0), COLOR(180, 30, 30), x + 4, y - 12);
+        
+        // Vũ khí
+        filledRectangle(x + 8, y - 13, x + 14, y - 9, COLOR(100, 100, 100), COLOR(180, 180, 200));
+    } else {
+        int armPoints[] = {
+            x, y - 14,
+            x - 8, y - 12,
+            x - 8, y - 10,
+            x, y - 12
+        };
+        filledPolygon(armPoints, 4, COLOR(100, 0, 0), COLOR(180, 30, 30), x - 4, y - 12);
+        
+        // Vũ khí
+        filledRectangle(x - 14, y - 13, x - 8, y - 9, COLOR(100, 100, 100), COLOR(180, 180, 200));
+    }
+    
+    // Chân
+    int legPoints1[] = {x - 2, y - 8, x - 6, y, x - 4, y, x, y - 8};
+    filledPolygon(legPoints1, 4, COLOR(30, 30, 30), COLOR(50, 50, 60), x - 3, y - 4);
+    
+    int legPoints2[] = {x + 2, y - 8, x + 6, y, x + 4, y, x, y - 8};
+    filledPolygon(legPoints2, 4, COLOR(30, 30, 30), COLOR(50, 50, 60), x + 3, y - 4);
+    
+    // Mắt phát sáng
+    if (facingRight) {
+        filledMidpointCircle(x + 3, y - 24, 2, COLOR(255, 220, 0));
+    } else {
+        filledMidpointCircle(x - 3, y - 24, 2, COLOR(255, 220, 0));
+    }
+}
+
+/**
+ * Vẽ chìa khóa với tô màu Flood Fill
+ */
+static void drawFilledKey(int x, int y) {
+    // Đầu chìa khóa - vòng tròn vàng
+    midpointCircle(x, y - 8, 5, COLOR(150, 120, 0));
+    floodFill(x, y - 8, COLOR(255, 215, 0));
+    
+    // Lỗ khóa nhỏ
+    midpointCircle(x, y - 8, 2, COLOR(150, 120, 0));
+    floodFill(x, y - 8, COLOR(100, 100, 0));
+    
+    // Thân chìa khóa
+    filledRectangle(x - 1, y - 3, x + 1, y + 5, COLOR(150, 120, 0), COLOR(255, 215, 0));
+    
+    // Răng chìa khóa
+    filledRectangle(x + 1, y - 1, x + 3, y + 1, COLOR(150, 120, 0), COLOR(255, 215, 0));
+    filledRectangle(x + 1, y + 2, x + 3, y + 4, COLOR(150, 120, 0), COLOR(255, 215, 0));
+}
+
+/**
+ * Vẽ cửa với tô màu Flood Fill
+ */
+static void drawFilledDoor(int x, int y, bool isOpen) {
+    int doorColor = isOpen ? COLOR(100, 255, 100) : COLOR(139, 69, 19);
+    int borderColor = isOpen ? COLOR(50, 150, 50) : COLOR(80, 40, 10);
+    
+    // Khung cửa
+    filledRectangle(x - 12, y - 40, x + 12, y, borderColor, doorColor);
+    
+    if (!isOpen) {
+        // Tay nắm
+        midpointCircle(x + 6, y - 20, 3, COLOR(150, 120, 0));
+        floodFill(x + 6, y - 20, COLOR(255, 215, 0));
+        
+        // Các ô trang trí
+        filledRectangle(x - 9, y - 35, x - 3, y - 25, COLOR(80, 40, 10), COLOR(100, 50, 10));
+        filledRectangle(x + 3, y - 35, x + 9, y - 25, COLOR(80, 40, 10), COLOR(100, 50, 10));
+        filledRectangle(x - 9, y - 15, x - 3, y - 5, COLOR(80, 40, 10), COLOR(100, 50, 10));
+        filledRectangle(x + 3, y - 15, x + 9, y - 5, COLOR(80, 40, 10), COLOR(100, 50, 10));
+    }
+}
+
+/**
+ * Vẽ rương kho báu với tô màu Flood Fill
+ */
+static void drawFilledTreasureChest(int x, int y, bool isOpen) {
+    if (isOpen) {
+        // Nắp rương mở
+        filledRectangle(x - 15, y - 25, x + 15, y - 20, COLOR(100, 50, 0), COLOR(139, 69, 19));
+        
+        // Thân rương
+        filledRectangle(x - 15, y - 20, x + 15, y, COLOR(100, 50, 0), COLOR(160, 82, 45));
+        
+        // Vàng bên trong
+        for (int i = 0; i < 5; i++) {
+            int cx = x - 10 + i * 5;
+            int cy = y - 15 + (i % 2) * 3;
+            midpointCircle(cx, cy, 2, COLOR(150, 120, 0));
+            floodFill(cx, cy, COLOR(255, 215, 0));
+        }
+    } else {
+        // Rương đóng
+        filledRectangle(x - 15, y - 20, x + 15, y, COLOR(100, 50, 0), COLOR(139, 69, 19));
+        
+        // Khóa
+        filledRectangle(x - 3, y - 12, x + 3, y - 8, COLOR(150, 120, 0), COLOR(255, 215, 0));
+    }
+    
+    // Viền kim loại
+    bresenhamLine(x - 15, y - 10, x + 15, y - 10, COLOR(180, 180, 200));
+    bresenhamLine(x, y - 20, x, y, COLOR(180, 180, 200));
+}
+
+/**
+ * Vẽ cây với tô màu Flood Fill
+ */
+static void drawFilledTree(int x, int y) {
+    // Thân cây
+    filledRectangle(x - 5, y - 30, x + 5, y, COLOR(80, 40, 10), COLOR(139, 69, 19));
+    
+    // Tán lá (3 vòng tròn chồng lên nhau)
+    midpointCircle(x - 8, y - 35, 10, COLOR(0, 80, 0));
+    floodFill(x - 8, y - 35, COLOR(34, 139, 34));
+    
+    midpointCircle(x + 8, y - 35, 10, COLOR(0, 80, 0));
+    floodFill(x + 8, y - 35, COLOR(34, 139, 34));
+    
+    midpointCircle(x, y - 45, 12, COLOR(0, 80, 0));
+    floodFill(x, y - 45, COLOR(50, 205, 50));
+}
+
+/**
+ * Vẽ đám mây với tô màu Flood Fill
+ */
+static void drawFilledCloud(int x, int y) {
+    // 3 vòng tròn tạo thành đám mây
+    midpointCircle(x - 10, y, 8, COLOR(200, 200, 200));
+    floodFill(x - 10, y, COLOR(240, 240, 240));
+    
+    midpointCircle(x, y - 5, 10, COLOR(200, 200, 200));
+    floodFill(x, y - 5, COLOR(240, 240, 240));
+    
+    midpointCircle(x + 10, y, 8, COLOR(200, 200, 200));
+    floodFill(x + 10, y, COLOR(240, 240, 240));
+}
+
+/**
+ * Vẽ ngôi sao 5 cánh với tô màu Flood Fill
+ */
+static void drawFilledStar5(int x, int y, int size) {
+    // Tính toán 5 đỉnh ngôi sao
+    int points[10];
+    for (int i = 0; i < 5; i++) {
+        float angle = -90 + i * 72;  // 72 độ giữa các đỉnh
+        float rad = angle * M_PI / 180.0;
+        points[i * 2] = x + size * cos(rad);
+        points[i * 2 + 1] = y + size * sin(rad);
+    }
+    
+    // Vẽ ngôi sao bằng cách nối các đỉnh (1-3-5-2-4-1)
+    bresenhamLine(points[0], points[1], points[6], points[7], COLOR(200, 150, 0));
+    bresenhamLine(points[6], points[7], points[4], points[5], COLOR(200, 150, 0));
+    bresenhamLine(points[4], points[5], points[2], points[3], COLOR(200, 150, 0));
+    bresenhamLine(points[2], points[3], points[8], points[9], COLOR(200, 150, 0));
+    bresenhamLine(points[8], points[9], points[0], points[1], COLOR(200, 150, 0));
+    
+    // Tô màu
+    floodFill(x, y, COLOR(255, 215, 0));
+}
+
 #endif // CUSTOM_DRAWING_H
