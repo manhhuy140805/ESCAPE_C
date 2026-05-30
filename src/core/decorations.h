@@ -32,21 +32,84 @@ static void drawLevel1Background() {
 
 }
 
+// Hàm vẽ mạng nhện ở góc
+static void drawSpiderWeb(int x0, int y0, int dirX, int dirY, int size) {
+    setcolor(COLOR(90, 90, 100)); // Màu tơ nhện
+    int spokesX[] = {0, 33, 70, 95, 100};
+    int spokesY[] = {100, 95, 70, 33, 0};
+    for (int i = 0; i < 5; i++) {
+        line(x0, y0, x0 + dirX * spokesX[i] * size / 100, y0 + dirY * spokesY[i] * size / 100);
+    }
+    for (int r = 1; r <= 5; r++) {
+        float scale = r / 5.0f;
+        for (int i = 0; i < 4; i++) {
+            int px1 = x0 + dirX * spokesX[i] * size / 100 * scale;
+            int py1 = y0 + dirY * spokesY[i] * size / 100 * scale;
+            int px2 = x0 + dirX * spokesX[i+1] * size / 100 * scale;
+            int py2 = y0 + dirY * spokesY[i+1] * size / 100 * scale;
+            line(px1, py1, px2, py2);
+        }
+    }
+}
+
 // background level 2
 static void drawLevel2Background() {
-    setbkcolor(COLOR(15, 10, 25));
+    // Màu nền hang nhện (xanh rêu đen)
+    setbkcolor(COLOR(10, 15, 10));
     cleardevice();
     
-    // vòng tròn đồng tâm
-    int centerX = SCREEN_WIDTH / 2, centerY = SCREEN_HEIGHT / 2;
-    for (int i = 10; i > 0; i--) {
-        setcolor(COLOR(15 + i * 3, 10 + i * 3, 25 + i * 5));
-        circle(centerX, centerY, i * 70);
-    }
+    // Vách đá trên trần
+    setfillstyle(SOLID_FILL, COLOR(25, 30, 25));
+    setcolor(COLOR(25, 30, 25));
+    int ceiling[] = {
+        0, 0,
+        150, 180,
+        300, 50,
+        450, 220,
+        600, 80,
+        750, 250,
+        950, 90,
+        1100, 160,
+        SCREEN_WIDTH, 50,
+        SCREEN_WIDTH, 0,
+        0, 0
+    };
+    fillpoly(11, ceiling);
 
-    // tP3
-    drawKochCurve(120, 235, 310, 235, 3, COLOR(75, 65, 115));
-    drawKochCurve(790, 250, 990, 250, 3, COLOR(82, 64, 125));
+    // Đá ngầm dưới đáy hang
+    setfillstyle(SOLID_FILL, COLOR(20, 25, 20));
+    setcolor(COLOR(20, 25, 20));
+    int floor[] = {
+        0, SCREEN_HEIGHT,
+        150, SCREEN_HEIGHT - 120,
+        350, SCREEN_HEIGHT - 180,
+        550, SCREEN_HEIGHT - 100,
+        750, SCREEN_HEIGHT - 200,
+        950, SCREEN_HEIGHT - 90,
+        SCREEN_WIDTH, SCREEN_HEIGHT - 150,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        0, SCREEN_HEIGHT
+    };
+    fillpoly(9, floor);
+
+    // Hoa văn nứt nẻ trên vách đá (tP3 Fractal - cần thiết cho chấm điểm)
+    drawKochCurve(150, SCREEN_HEIGHT - 120, 350, SCREEN_HEIGHT - 180, 3, COLOR(40, 45, 40));
+    drawKochCurve(550, SCREEN_HEIGHT - 100, 750, SCREEN_HEIGHT - 200, 3, COLOR(35, 40, 35));
+    drawKochCurve(950, SCREEN_HEIGHT - 90, SCREEN_WIDTH, SCREEN_HEIGHT - 150, 3, COLOR(30, 35, 30));
+
+    // Rễ cây mọc rủ xuống (tP3 Fractal Rồng - cần thiết cho chấm điểm)
+    drawDragonCurve(450, 220, 450, 450, 5, 1, COLOR(45, 55, 45));
+    drawDragonCurve(750, 250, 750, 500, 6, 1, COLOR(35, 45, 35));
+
+    // Vẽ mạng nhện ở các góc và giữa trần
+    drawSpiderWeb(0, 0, 1, 1, 350); // Góc trên trái
+    drawSpiderWeb(SCREEN_WIDTH, 0, -1, 1, 400); // Góc trên phải
+    drawSpiderWeb(0, SCREEN_HEIGHT, 1, -1, 250); // Góc dưới trái
+    drawSpiderWeb(SCREEN_WIDTH, SCREEN_HEIGHT, -1, -1, 300); // Góc dưới phải
+    
+    // Mạng nhện rủ từ trần
+    drawSpiderWeb(600, 0, 1, 1, 200);
+    drawSpiderWeb(600, 0, -1, 1, 200);
 }
 
 // background level 3

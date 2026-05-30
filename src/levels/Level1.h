@@ -330,7 +330,7 @@ static void runGameLevel1() {
             if (door1.open) {
                 int dx1 = door1.x - TILE_SIZE;
                 int dx2 = door1.x + TILE_SIZE;
-                int dy1 = door1.y - TILE_SIZE * 3;
+                int dy1 = door1.y - TILE_SIZE * 2;
                 int dy2 = door1.y;
                 reachedDoor = !(px2 < dx1 || px1 > dx2 || py2 < dy1 || py1 > dy2);
             }

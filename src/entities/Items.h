@@ -45,7 +45,7 @@ static void drawKey(const KeyItem &k) {
 
 static void drawDoor(const DoorItem &d) {
     int w = TILE_SIZE * 2;
-    int h = TILE_SIZE * 3;
+    int h = TILE_SIZE * 2;
     int x1 = d.x - w / 2;
     int y1 = d.y - h;
     int x2 = d.x + w / 2;
@@ -64,7 +64,7 @@ static void drawDoor(const DoorItem &d) {
     // tay nắm cửa
     setcolor(GAME_COLOR_KEY);
     setfillstyle(SOLID_FILL, GAME_COLOR_KEY);
-    fillellipse(x2 - TILE_SIZE / 3, d.y - TILE_SIZE * 1.5, 3, 3);
+    fillellipse(x2 - TILE_SIZE / 3, d.y - TILE_SIZE * 1.0, 3, 3);
 }
 
 #endif // eNTITY_ITEMS_H

@@ -296,11 +296,14 @@ static EndAction showEndScreen(int levelNumber, bool win, bool isLastLevel = fal
 }
 
 // hUD cho mỗi level
+extern Player player;
 static void drawLevelHUD(int levelNumber, int keysCollected, int keysRequired, bool paused) {
+    int hudY = (player.y < SCREEN_HEIGHT / 2) ? SCREEN_HEIGHT - 65 : 5;
+
     // vẽ nền HUD
-    drawRect(10, 5, 200, 54, 0x111111);
+    drawRect(10, hudY, 200, 54, 0x111111);
     setcolor(HEX2COLOR(0x555555));
-    rectangle(10, 5, 210, 59);
+    rectangle(10, hudY, 210, hudY + 54);
 
     int oldBk = getbkcolor();
     setbkcolor(HEX2COLOR(0x111111)); // nền trùng với HUD panel
@@ -310,7 +313,7 @@ static void drawLevelHUD(int levelNumber, int keysCollected, int keysRequired, b
 
     char levelText[32];
     sprintf(levelText, "LEVEL %d", levelNumber);
-    outtextxy(18, 12, levelText);
+    outtextxy(18, hudY + 7, levelText);
 
     if (keysCollected >= keysRequired) {
         setcolor(10); // xanh lục báo hiệu đủ key
@@ -319,18 +322,18 @@ static void drawLevelHUD(int levelNumber, int keysCollected, int keysRequired, b
     }
     char keyText[64];
     sprintf(keyText, "Keys: %d / %d", keysCollected, keysRequired);
-    outtextxy(18, 36, keyText);
+    outtextxy(18, hudY + 31, keyText);
 
     char hudRight[48];
     sprintf(hudRight, "0-3 Speed: %d  |  P: Pause  |  ESC: Menu", GAME_SPEED_MODE);
     int hudW = textwidth(hudRight);
     
-    drawRect(SCREEN_WIDTH - hudW - 24, 5, hudW + 16, 32, 0x111111);
+    drawRect(SCREEN_WIDTH - hudW - 24, hudY, hudW + 16, 32, 0x111111);
     setcolor(HEX2COLOR(0x555555));
-    rectangle(SCREEN_WIDTH - hudW - 24, 5, SCREEN_WIDTH - 8, 37);
+    rectangle(SCREEN_WIDTH - hudW - 24, hudY, SCREEN_WIDTH - 8, hudY + 32);
     
     setcolor(15);
-    outtextxy(SCREEN_WIDTH - hudW - 16, 12, hudRight);
+    outtextxy(SCREEN_WIDTH - hudW - 16, hudY + 7, hudRight);
     
     setbkcolor(oldBk); // khôi phục
 

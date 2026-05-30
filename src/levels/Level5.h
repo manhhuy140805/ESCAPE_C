@@ -196,7 +196,7 @@ static void runGameLevel5() {
 
             if (door1.open) {
                 reachedDoor = !(px2 < door1.x - TILE_SIZE || px1 > door1.x + TILE_SIZE ||
-                                py2 < door1.y - TILE_SIZE * 3 || py1 > door1.y);
+                                py2 < door1.y - TILE_SIZE * 2 || py1 > door1.y);
             }
             if (reachedDoor) {
                 // level 5 là level cuối
