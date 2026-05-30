@@ -4,8 +4,9 @@
 #include <graphics.h>
 #include <stdlib.h>
 #include <time.h>
+#include "fractals.h"
 
-// vẽ mây đơn giản bằng hàm thư viện (nhanh)
+// vẽ mây đơn giản bằng hàm thư viện
 static void drawCloud(int x, int y, int size, int color) {
     setfillstyle(SOLID_FILL, color);
     setcolor(color);
@@ -14,7 +15,7 @@ static void drawCloud(int x, int y, int size, int color) {
     fillellipse(x + size, y + size/2, size * 3/4, size * 3/4);
 }
 
-// background level 1: đơn giản nhất
+// background level 1
 static void drawLevel1Background() {
     setbkcolor(COLOR(100, 150, 200));
     cleardevice();
@@ -28,6 +29,7 @@ static void drawLevel1Background() {
     drawCloud(300, 150, 25, COLOR(240, 240, 250));
     drawCloud(600, 100, 30, COLOR(235, 235, 245));
     drawCloud(900, 180, 28, COLOR(245, 245, 255));
+
 }
 
 // background level 2
@@ -41,6 +43,10 @@ static void drawLevel2Background() {
         setcolor(COLOR(15 + i * 3, 10 + i * 3, 25 + i * 5));
         circle(centerX, centerY, i * 70);
     }
+
+    // tP3
+    drawKochCurve(120, 235, 310, 235, 3, COLOR(75, 65, 115));
+    drawKochCurve(790, 250, 990, 250, 3, COLOR(82, 64, 125));
 }
 
 // background level 3
@@ -56,17 +62,43 @@ static void drawLevel3Background() {
     // mây
     drawCloud(250, 180, 20, COLOR(220, 220, 230));
     drawCloud(700, 150, 18, COLOR(215, 215, 225));
+
+    // nen Level 3 uu tien nhe de giu FPS on dinh khi map co nhieu gai
+    setcolor(COLOR(150, 115, 70));
+    line(130, 615, 330, 615);
+    line(700, 640, 940, 640);
 }
 
 // background level 4
 static void drawLevel4Background() {
-    setbkcolor(COLOR(100, 150, 100));
+    setbkcolor(COLOR(175, 205, 230));
     cleardevice();
-    
-    // mây
-    drawCloud(200, 120, 22, COLOR(240, 245, 250));
-    drawCloud(500, 100, 25, COLOR(235, 240, 245));
-    drawCloud(850, 140, 20, COLOR(245, 250, 255));
+
+    // may lanh va nui bang xa xa
+    drawCloud(200, 120, 22, COLOR(245, 250, 255));
+    drawCloud(500, 100, 25, COLOR(240, 248, 255));
+    drawCloud(850, 140, 20, COLOR(250, 252, 255));
+
+    setfillstyle(SOLID_FILL, COLOR(210, 230, 245));
+    setcolor(COLOR(210, 230, 245));
+    int peak1[] = {40, 620, 190, 360, 340, 620, 40, 620};
+    fillpoly(4, peak1);
+    int peak2[] = {710, 630, 890, 340, 1060, 630, 710, 630};
+    fillpoly(4, peak2);
+
+    // tP3
+    drawKochSnowflake(150, 210, 28, 2, COLOR(245, 250, 255));
+    drawKochSnowflake(420, 165, 22, 2, COLOR(235, 248, 255));
+    drawKochSnowflake(690, 230, 26, 2, COLOR(245, 250, 255));
+    drawKochSnowflake(945, 185, 24, 2, COLOR(235, 248, 255));
+
+    for (int i = 0; i < 36; i++) {
+        int sx = (i * 91) % SCREEN_WIDTH;
+        int sy = 70 + (i * 57) % 520;
+        setcolor(COLOR(245, 250, 255));
+        line(sx - 2, sy, sx + 2, sy);
+        line(sx, sy - 2, sx, sy + 2);
+    }
 }
 
 // background level 5
@@ -89,6 +121,10 @@ static void drawLevel5Background() {
     setfillstyle(SOLID_FILL, COLOR(220, 120, 70));
     setcolor(COLOR(220, 120, 70));
     fillellipse(900, 500, 45, 45);
+
+    // tP3
+    drawDragonCurve(465, 120, 635, 120, 5, 1, COLOR(0, 140, 125));
+    drawKochCurve(390, 705, 710, 705, 2, COLOR(90, 105, 150));
 }
 
 // vẽ sao lấp lánh

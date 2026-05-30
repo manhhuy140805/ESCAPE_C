@@ -6,45 +6,39 @@
 #include <math.h>
 #include "../config.h"
 #include "../core/primitives.h"
+#include "../graphics/CustomDrawing.h"
 
-// ============================================================
-//  Bullet - đạn bắn ra từ quái vật
-// ============================================================
+// bullet
 struct Bullet {
     float x, y;
     float vx, vy;
     bool active;
+    bool isRocket;
 };
 
-// ============================================================
-//  Hằng số Player Bullet (đạn của người chơi - nhanh hơn đạn quái)
-// ============================================================
+// hằng số Player Bullet
 static const int   MAX_PLAYER_BULLETS  = 16;
-static const float PLAYER_BULLET_SPEED = 10.0f;   // px/frame
-static const int   ROCKET_COOLDOWN_MAX = 50;       // frames (~0.8s @ 60fps)
+static const float PLAYER_BULLET_SPEED = 10.0f; // px/frame
+static const int   ROCKET_COOLDOWN_MAX = 50; // frames
 
-// ============================================================
-//  Enemy - quái vật bắn đạn
-// ============================================================
+// enemy
 struct Enemy {
-    int   x, y;          // Tọa độ tâm chân
+    int   x, y; // tọa độ tâm chân
     int   width, height;
-    bool  facingRight;   // Hướng nhìn (cũng là hướng bắn)
-    int   shootTimer;    // Đếm ngược frame đến lần bắn tiếp theo
-    int   shootCooldown; // Số frame giữa 2 lần bắn
+    bool  facingRight; // hướng nhìn
+    int   shootTimer; // đếm ngược frame đến lần bắn tiếp theo
+    int   shootCooldown; // số frame giữa 2 lần bắn
     bool  active;
-    // Di chuyển
-    bool  canMove;       // Có thể di chuyển không
-    float vx;            // Vận tốc ngang
-    float vy;            // Vận tốc dọc (cho gravity)
-    bool  onGround;      // Đang đứng trên mặt đất
-    int   moveRange;     // Phạm vi di chuyển (pixels)
-    int   startX;        // Vị trí xuất phát
+    // di chuyển
+    bool  canMove; // có thể di chuyển không
+    float vx; // vận tốc ngang
+    float vy; // vận tốc dọc
+    bool  onGround; // đang đứng trên mặt đất
+    int   moveRange; // phạm vi di chuyển
+    int   startX; // vị trí xuất phát
 };
 
-// ============================================================
-//  Hằng số
-// ============================================================
+// hằng số
 static const int MAX_ENEMIES = 8;
 static const int MAX_BULLETS = 32;
 static const float BULLET_SPEED = 6.0f;
@@ -52,11 +46,7 @@ static const int BULLET_RADIUS  = 5;
 static const int ENEMY_W = 28;
 static const int ENEMY_H = 32;
 
-// ============================================================
-//  Khởi tạo một enemy
-//  canMove: có thể di chuyển qua lại không
-//  moveRange: phạm vi di chuyển (pixels)
-// ============================================================
+// khởi tạo một enemy
 static Enemy makeEnemy(int x, int y, bool facingRight, int cooldown = 90, 
                        bool canMove = false, int moveRange = 100) {
     Enemy e;
@@ -68,16 +58,14 @@ static Enemy makeEnemy(int x, int y, bool facingRight, int cooldown = 90,
     e.active = true;
     e.canMove = canMove;
     e.vx = canMove ? 2.0f : 0.0f;
-    e.vy = 0.0f;           // Khởi tạo vận tốc dọc
-    e.onGround = false;    // Khởi tạo trạng thái đất
+    e.vy = 0.0f; // khởi tạo vận tốc dọc
+    e.onGround = false; // khởi tạo trạng thái đất
     e.moveRange = moveRange;
     e.startX = x;
     return e;
 }
 
-// ============================================================
-//  Vẽ enemy (pixel-art: giống player nhưng màu đỏ/xám)
-// ============================================================
+// vẽ enemy
 static void drawEnemy(const Enemy& e) {
     if (!e.active) return;
 
@@ -86,11 +74,11 @@ static void drawEnemy(const Enemy& e) {
     int y2 = e.y;
     int y1 = e.y - e.height;
 
-    int bodyColor  = COLOR(180, 30, 30);    // Đỏ thân
-    int armorColor = COLOR(80, 80, 90);     // Giáp xám
-    int eyeColor   = COLOR(255, 220, 0);    // Mắt vàng
-    int legColor   = COLOR(50, 50, 60);     // Chân đen
-    int hornColor  = COLOR(200, 60, 0);     // Sừng cam
+    int bodyColor  = COLOR(180, 30, 30); // đỏ thân
+    int armorColor = COLOR(80, 80, 90); // giáp xám
+    int eyeColor   = COLOR(255, 220, 0); // mắt vàng
+    int legColor   = COLOR(50, 50, 60); // chân đen
+    int hornColor  = COLOR(200, 60, 0); // sừng cam
 
     int headH  = e.height * 2 / 5;
     int bodyH  = e.height * 2 / 5;
@@ -98,19 +86,19 @@ static void drawEnemy(const Enemy& e) {
     int headBot= bodyTop;
     int headTop= headBot - headH;
 
-    // Thân (giáp)
+    // thân
     setfillstyle(SOLID_FILL, armorColor);
     bar(x1 + 4, bodyTop, x2 - 4, y2 - e.height / 5);
 
-    // Chân
+    // chân
     setfillstyle(SOLID_FILL, legColor);
     bar(x1 + 4, y2 - e.height / 5, x2 - 4, y2 - 3);
 
-    // Đầu
+    // đầu
     setfillstyle(SOLID_FILL, bodyColor);
     bar(x1 + 5, headTop + 2, x2 - 5, headBot - 1);
 
-    // Sừng
+    // sừng
     setcolor(HEX2COLOR(0xCC3300));
     setfillstyle(SOLID_FILL, hornColor);
     int hx = e.facingRight ? (x2 - 7) : (x1 + 7);
@@ -118,7 +106,7 @@ static void drawEnemy(const Enemy& e) {
                    hx,     headTop - 6, hx - 4, headTop + 4 };
     fillpoly(4, pts);
 
-    // Mắt sáng
+    // mắt sáng
     setfillstyle(SOLID_FILL, eyeColor);
     int eyeY = headTop + headH / 2;
     if (e.facingRight) {
@@ -127,11 +115,11 @@ static void drawEnemy(const Enemy& e) {
         bar(x1 + 5, eyeY - 2, x1 + 9, eyeY + 2);
     }
 
-    // Viền
+    // viền
     setcolor(COLOR(20, 0, 0));
     rectangle(x1 + 3, headTop, x2 - 3, y2);
 
-    // Vũ khí (thanh kiếm mini)
+    // vũ khí
     setcolor(COLOR(180, 180, 200));
     setlinestyle(SOLID_LINE, 0, 2);
     if (e.facingRight) {
@@ -142,43 +130,37 @@ static void drawEnemy(const Enemy& e) {
     setlinestyle(SOLID_LINE, 0, 1);
 }
 
-// ============================================================
-//  Vẽ đạn
-// ============================================================
+// vẽ đạn
 static void drawBullet(const Bullet& b) {
     if (!b.active) return;
     int bx = static_cast<int>(b.x);
     int by = static_cast<int>(b.y);
+    drawCustomBullet(bx, by, false);
+    return;
 
-    // Nhân đạn phát sáng: lõi trắng + viền đỏ
+    // nhân đạn phát sáng
     setfillstyle(SOLID_FILL, COLOR(255, 80, 0));
     fillellipse(bx, by, BULLET_RADIUS + 2, BULLET_RADIUS + 2);
     setfillstyle(SOLID_FILL, COLOR(255, 220, 100));
     fillellipse(bx, by, BULLET_RADIUS - 1, BULLET_RADIUS - 1);
 }
 
-// ============================================================
-//  Update enemy (bắn đạn khi đến lượt + di chuyển + va chạm map)
-//  bullets[]: mảng đạn toàn cục
-//  numBullets: số phần tử trong mảng
-//  player: tham chiếu đến player để tính hướng bắn
-//  isSolidTile: hàm kiểm tra tile rắn (truyền từ level)
-// ============================================================
+// update enemy
 static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets, 
                        const Player& player,
                        bool (*isSolidTile)(int row, int col)) {
     if (!e.active) return;
     
-    // ====== VA CHẠM VỚI MAP (giống player) ======
-    // Trọng lực
-    e.vy += GAME_GRAVITY;
+  // ====== VA CHẠM VỚI MAP
+    // trọng lực
+    e.vy += GAME_GRAVITY * GAME_SPEED_MULTIPLIER;
     if (e.vy > GAME_MAX_FALL_SPEED) e.vy = GAME_MAX_FALL_SPEED;
     
     int halfW = e.width / 2;
     int fullH = e.height;
     
-    // Va chạm trục Y (rơi xuống)
-    float newYf = e.y + e.vy;
+    // va chạm trục Y
+    float newYf = e.y + e.vy * GAME_SPEED_MULTIPLIER;
     int leftX = e.x - halfW;
     int rightX = e.x + halfW - 1;
     e.onGround = false;
@@ -197,7 +179,7 @@ static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets,
             e.vy = 0.0f;
             e.onGround = true;
         }
-    } else if (e.vy < 0.0f) { // nhảy lên (va chạm trần)
+    } else if (e.vy < 0.0f) { // nhảy lên
         int top = static_cast<int>(newYf) - fullH;
         int row = top / TILE_SIZE;
         int colStart = leftX / TILE_SIZE;
@@ -213,13 +195,13 @@ static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets,
     }
     e.y = static_cast<int>(newYf);
     
-    // ====== DI CHUYỂN NGANG (với va chạm) ======
-    if (e.canMove && e.onGround) { // Chỉ di chuyển khi đứng trên đất
-        float newXf = e.x + e.vx;
+  // ====== DI CHUYỂN NGANG
+    if (e.canMove && e.onGround) { // chỉ di chuyển khi đứng trên đất
+        float newXf = e.x + e.vx * GAME_SPEED_MULTIPLIER;
         int topY = e.y - fullH;
         int bottomY = e.y - 1;
         
-        // Kiểm tra va chạm tường
+        // kiểm tra va chạm tường
         bool hitWall = false;
         if (e.vx > 0.0f) {
             int right = static_cast<int>(newXf) + halfW;
@@ -235,17 +217,17 @@ static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets,
             }
         }
         
-        // Kiểm tra biên màn hình
+        // kiểm tra biên màn hình
         if (newXf < halfW || newXf > SCREEN_WIDTH - halfW) {
             hitWall = true;
         }
         
-        // Kiểm tra phạm vi di chuyển
+        // kiểm tra phạm vi di chuyển
         if (newXf > e.startX + e.moveRange || newXf < e.startX - e.moveRange) {
             hitWall = true;
         }
         
-        // Đảo chiều nếu va chạm
+        // đảo chiều nếu va chạm
         if (hitWall) {
             e.vx = -e.vx;
             e.facingRight = (e.vx > 0);
@@ -254,12 +236,13 @@ static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets,
         }
     }
     
-    // ====== BẮN ĐẠN CHÉO THEO HƯỚNG PLAYER ======
-    e.shootTimer--;
+  // ====== BẮN ĐẠN CHÉO THEO HƯỚNG PLAYER ======
+    if (GAME_SPEED_MULTIPLIER <= 0.0f) return;
+    e.shootTimer -= (GAME_SPEED_MULTIPLIER >= 1.5f) ? 2 : 1;
     if (e.shootTimer <= 0) {
         e.shootTimer = e.shootCooldown;
 
-        // Tính hướng từ enemy đến player
+        // tính hướng từ enemy đến player
         int originX = e.x;
         int originY = e.y - e.height / 2;
         int targetX = player.x;
@@ -272,10 +255,10 @@ static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets,
         dx /= len;
         dy /= len;
         
-        // Cập nhật hướng nhìn enemy
+        // cập nhật hướng nhìn enemy
         e.facingRight = (targetX >= originX);
 
-        // Tìm slot đạn rảnh và bắn theo hướng player
+        // tìm slot đạn rảnh và bắn theo hướng player
         for (int i = 0; i < numBullets; ++i) {
             if (!bullets[i].active) {
                 bullets[i].active = true;
@@ -283,29 +266,64 @@ static void updateEnemy(Enemy& e, Bullet bullets[], int numBullets,
                 bullets[i].y = static_cast<float>(originY);
                 bullets[i].vx = dx * BULLET_SPEED;
                 bullets[i].vy = dy * BULLET_SPEED;
+                bullets[i].isRocket = false;
                 break;
             }
         }
     }
 }
 
-// ============================================================
-//  Update đạn (di chuyển + kiểm tra ra khỏi màn hình)
-// ============================================================
+// update đạn
 static void updateBullet(Bullet& b) {
     if (!b.active) return;
-    b.x += b.vx;
-    b.y += b.vy;
+    b.x += b.vx * GAME_SPEED_MULTIPLIER;
+    b.y += b.vy * GAME_SPEED_MULTIPLIER;
 
-    // Ra ngoài màn hình -> hủy
+    // ra ngoài màn hình
     if (b.x < 0 || b.x > SCREEN_WIDTH || b.y < 0 || b.y > SCREEN_HEIGHT) {
         b.active = false;
     }
 }
 
-// ============================================================
-//  Kiểm tra đạn có trúng player không (AABB)
-// ============================================================
+// va chạm đạn với map tile rắn
+static bool bulletHitsSolidTile(const Bullet& b, bool (*isSolidTile)(int row, int col)) {
+    if (!b.active || isSolidTile == NULL) return false;
+
+    int bx = static_cast<int>(b.x);
+    int by = static_cast<int>(b.y);
+    int r = BULLET_RADIUS;
+
+    int left   = (bx - r) / TILE_SIZE;
+    int right  = (bx + r) / TILE_SIZE;
+    int top    = (by - r) / TILE_SIZE;
+    int bottom = (by + r) / TILE_SIZE;
+
+    for (int row = top; row <= bottom; ++row) {
+        for (int col = left; col <= right; ++col) {
+            if (isSolidTile(row, col)) return true;
+        }
+    }
+
+    return false;
+}
+
+static void updateBulletWithTileCollision(Bullet& b, bool (*isSolidTile)(int row, int col)) {
+    if (!b.active) return;
+
+    b.x += b.vx * GAME_SPEED_MULTIPLIER;
+    b.y += b.vy * GAME_SPEED_MULTIPLIER;
+
+    if (b.x < 0 || b.x > SCREEN_WIDTH || b.y < 0 || b.y > SCREEN_HEIGHT) {
+        b.active = false;
+        return;
+    }
+
+    if (bulletHitsSolidTile(b, isSolidTile)) {
+        b.active = false;
+    }
+}
+
+// kiểm tra đạn có trúng player không
 static bool bulletHitsPlayer(const Bullet& b, int px1, int py1, int px2, int py2) {
     if (!b.active) return false;
     int bx = static_cast<int>(b.x);
@@ -314,24 +332,28 @@ static bool bulletHitsPlayer(const Bullet& b, int px1, int py1, int px2, int py2
              by + BULLET_RADIUS < py1 || by - BULLET_RADIUS > py2);
 }
 
-// ============================================================
-//  Vẽ đạn của Player (xanh cyan, khác màu đạn quái đỏ-cam)
-// ============================================================
+// vẽ đạn của Player
 static void drawPlayerBullet(const Bullet& b) {
     if (!b.active) return;
     int bx = static_cast<int>(b.x);
     int by = static_cast<int>(b.y);
-    // Lớp ngoài xanh biển
+    if (b.isRocket) {
+        // rocket bullet
+        midpointCircle(bx, by, 5, COLOR(255, 165, 0)); // Màu cam chuẩn
+        filledMidpointCircle(bx, by, 4, COLOR(255, 180, 50)); // Màu cam sáng bên trong
+        return;
+    }
+    drawCustomBullet(bx, by, true);
+    return;
+    // lớp ngoài xanh biển
     setfillstyle(SOLID_FILL, COLOR(0, 150, 255));
     fillellipse(bx, by, BULLET_RADIUS + 2, BULLET_RADIUS + 2);
-    // Lớp trong trắng sáng
+    // lớp trong trắng sáng
     setfillstyle(SOLID_FILL, COLOR(200, 240, 255));
     fillellipse(bx, by, BULLET_RADIUS - 1, BULLET_RADIUS - 1);
 }
 
-// ============================================================
-//  Kiểm tra đạn player có trúng enemy không (AABB)
-// ============================================================
+// kiểm tra đạn player có trúng enemy không
 static bool playerBulletHitsEnemy(const Bullet& b, const Enemy& e) {
     if (!b.active || !e.active) return false;
     int bx = static_cast<int>(b.x);
@@ -342,18 +364,16 @@ static bool playerBulletHitsEnemy(const Bullet& b, const Enemy& e) {
              by + BULLET_RADIUS < ey1 || by - BULLET_RADIUS > ey2);
 }
 
-// ============================================================
-//  Helper: Lấy hướng từ player đến chuột (normalized)
-// ============================================================
+// helper
 struct MouseDir {
-    float dx, dy;  // vector đơn vị hướng player -> chuột
+    float dx, dy; // vector đơn vị hướng player
     int   mouseX, mouseY; // tọa độ chuột trong cửa sổ game
 };
 
 static MouseDir getMouseDirection(int originX, int originY) {
     POINT pt;
     GetCursorPos(&pt);
-    // Tìm cửa sổ game theo tiêu đề
+    // tìm cửa sổ game theo tiêu đề
     HWND hwnd = FindWindow(NULL, "Parkour 2D - Me Cung Phieu Luu");
     if (hwnd) ScreenToClient(hwnd, &pt);
 
@@ -370,12 +390,12 @@ static MouseDir getMouseDirection(int originX, int originY) {
     return md;
 }
 
-// ============================================================
-//  Reset toàn bộ mảng đạn
-// ============================================================
+// reset toàn bộ mảng đạn
 static void resetBullets(Bullet bullets[], int numBullets) {
-    for (int i = 0; i < numBullets; ++i)
+    for (int i = 0; i < numBullets; ++i) {
         bullets[i].active = false;
+        bullets[i].isRocket = false;
+    }
 }
 
-#endif // ENTITY_ENEMY_H
+#endif // eNTITY_ENEMY_H

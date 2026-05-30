@@ -5,9 +5,9 @@
 
 class Menu {
 private:
-    int selectedOption;  // 0: Start, 1: Instructions, 2: Exit
+    int selectedOption; // 0
     int totalOptions;
-    int lastKey;  // Lưu phím cuối để tránh đọc lại
+    int lastKey; // lưu phím cuối để tránh đọc lại
     
 public:
     Menu();

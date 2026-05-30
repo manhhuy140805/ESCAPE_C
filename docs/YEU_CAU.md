@@ -1,5 +1,3 @@
-Sử dụng Game đã chọn ở điểm TP1 hoặc có thể thay đổi game mới sao cho phù hợp với các tiêu chí sau:
-
 ==================================================
 ĐIỂM TP2: CÀI ĐẶT THUẬT TOÁN VẼ ĐOẠN THẲNG/ĐƯỜNG TRÒN (CHƯƠNG 2)
 ==================================================
@@ -78,6 +76,7 @@ chưa tạo được cảm giác của một trò chơi hoàn chỉnh.
 Hình ảnh hiển thị lỗi,
 màu sắc chồng chéo khó nhìn,
 không có thông tin hướng dẫn người dùng.
+
 
 ==================================================
 ĐIỂM TP3: HÌNH HỌC FRACTAL (CHƯƠNG 3)

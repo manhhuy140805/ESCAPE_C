@@ -11,15 +11,15 @@ Menu::Menu() {
 }
 
 void Menu::drawBackground() {
-    // Vẽ background mê cung
+    // vẽ background mê cung
     drawLabyrinthBackground();
     
-    // Vẽ các ngôi sao trang trí
+    // vẽ các ngôi sao trang trí
     drawStars();
 }
 
 void Menu::drawTitle() {
-    // Vẽ title với outline đẹp
+    // vẽ title với outline đẹp
     drawGameTitle(SCREEN_WIDTH/2 - 320, 80);
 }
 
@@ -28,16 +28,16 @@ void Menu::drawOptions() {
     int startY = 300;
     int spacing = 110;
     
-    // START GAME button (vàng)
+    // sTART GAME button
     drawStartButton(centerX, startY, 460, 80, selectedOption == 0);
     
-    // INSTRUCTIONS button (trắng xám)
+    // iNSTRUCTIONS button
     drawInstructionsButton(centerX, startY + spacing, 460, 80, selectedOption == 1);
     
-    // EXIT button (trắng xám)
+    // eXIT button
     drawExitButton(centerX, startY + spacing * 2, 460, 80, selectedOption == 2);
     
-    // Hướng dẫn
+    // hướng dẫn
     settextstyle(8, HORIZ_DIR, 2);
     setcolor(15);
     char hint[] = "UP/DOWN: Select  |  ENTER: Confirm";
@@ -45,56 +45,52 @@ void Menu::drawOptions() {
 }
 
 void Menu::drawInstructions() {
-    // Background
+    // background
     drawLabyrinthBackground();
     drawStars();
     
-    // ============================================================
-    // TITLE với shadow
-    // ============================================================
-    // Shadow
+    // tITLE với shadow
+    // shadow
     settextstyle(10, HORIZ_DIR, 5);
     setcolor(COLOR(0, 0, 0));
     char title[] = "HOW TO PLAY";
     outtextxy(SCREEN_WIDTH/2 - 218, 42, title);
     
-    // Main title - VÀNG
+    // main title
     setcolor(COLOR(255, 200, 0));
     outtextxy(SCREEN_WIDTH/2 - 220, 40, title);
     
-    // Underline - VÀNG
+    // underline
     for (int i = 0; i < 3; i++) {
         setcolor(COLOR(255, 200 - i*20, 0));
         line(SCREEN_WIDTH/2 - 230, 95 + i, SCREEN_WIDTH/2 + 230, 95 + i);
     }
     
-    // ============================================================
-    // BEAUTIFUL PANELS - NỀN XANH NHẠT
-    // ============================================================
+    // bEAUTIFUL PANELS
     
     auto drawBeautifulPanel = [](int x1, int y1, int x2, int y2) {
-        // Shadow
+        // shadow
         setfillstyle(SOLID_FILL, COLOR(0, 0, 0));
         bar(x1 + 5, y1 + 5, x2 + 5, y2 + 5);
         
-        // Main panel - gradient (màu xanh background)
+        // main panel
         for (int i = 0; i < 5; i++) {
             setfillstyle(SOLID_FILL, COLOR(80 - i*3, 130 - i*3, 180 - i*3));
             bar(x1 + i, y1 + i, x2 - i, y2 - i);
         }
         
-        // Inner fill (màu xanh background)
+        // inner fill
         setfillstyle(SOLID_FILL, COLOR(100, 150, 200));
         bar(x1 + 5, y1 + 5, x2 - 5, y2 - 5);
         
-        // Border
+        // border
         setcolor(COLOR(60, 100, 150));
         rectangle(x1, y1, x2, y2);
         setcolor(COLOR(80, 120, 170));
         rectangle(x1 + 1, y1 + 1, x2 - 1, y2 - 1);
     };
     
-    // Panels
+    // panels
     drawBeautifulPanel(60, 120, 520, 360);
     drawBeautifulPanel(60, 380, 520, 540);
     drawBeautifulPanel(540, 120, 1040, 390);
@@ -106,9 +102,7 @@ void Menu::drawInstructions() {
     int col1X = 80;
     int col2X = 560;
     
-    // ============================================================
-    // CONTROLS - XANH NHẠT
-    // ============================================================
+    // cONTROLS
     setcolor(COLOR(150, 220, 255));
     settextstyle(10, HORIZ_DIR, 3);
     char ctrl[] = "CONTROLS";
@@ -119,7 +113,7 @@ void Menu::drawInstructions() {
     
     settextstyle(8, HORIZ_DIR, 2);
     
-    // Keys - TRẮNG, descriptions - XANH NHẠT
+    // keys
     setcolor(COLOR(255, 255, 255));
     char c1[] = "W / SPACE";
     outtextxy(col1X + 20, 180, c1);
@@ -162,9 +156,7 @@ void Menu::drawInstructions() {
     char c6d[] = "Pause/Exit";
     outtextxy(col1X + 200, 330, c6d);
     
-    // ============================================================
-    // OBJECTIVES - VÀNG SÁNG
-    // ============================================================
+    // oBJECTIVES
     setcolor(COLOR(255, 220, 100));
     settextstyle(10, HORIZ_DIR, 3);
     char obj[] = "OBJECTIVES";
@@ -175,7 +167,7 @@ void Menu::drawInstructions() {
     
     settextstyle(8, HORIZ_DIR, 2);
     
-    // Objectives - VÀNG SÁNG, XANH LÁ SÁNG
+    // objectives
     setcolor(COLOR(255, 220, 100));
     char o1[] = "1. Collect 3 GOLDEN KEYS";
     outtextxy(col1X + 20, 440, o1);
@@ -188,9 +180,7 @@ void Menu::drawInstructions() {
     char o3[] = "3. Survive! (HP > 0)";
     outtextxy(col1X + 20, 510, o3);
     
-    // ============================================================
-    // GAME INFO - XANH LÁ SÁNG
-    // ============================================================
+    // gAME INFO
     setcolor(COLOR(100, 255, 150));
     settextstyle(10, HORIZ_DIR, 3);
     char info[] = "GAME INFO";
@@ -201,7 +191,7 @@ void Menu::drawInstructions() {
     
     settextstyle(8, HORIZ_DIR, 2);
     
-    // Player - XANH NHẠT
+    // player
     setcolor(COLOR(150, 220, 255));
     char pTitle[] = "PLAYER:";
     outtextxy(col2X + 20, 180, pTitle);
@@ -213,7 +203,7 @@ void Menu::drawInstructions() {
     char p2[] = "Damage: 1 HP/bullet";
     outtextxy(col2X + 40, 240, p2);
     
-    // Enemy - TRẮNG
+    // enemy
     setcolor(COLOR(255, 255, 255));
     char eTitle[] = "ENEMY:";
     outtextxy(col2X + 20, 275, eTitle);
@@ -224,9 +214,7 @@ void Menu::drawInstructions() {
     char e2[] = "Damage: -10 HP/hit";
     outtextxy(col2X + 40, 335, e2);
     
-    // ============================================================
-    // TIPS - XANH NHẠT
-    // ============================================================
+    // tIPS
     setcolor(COLOR(150, 220, 255));
     settextstyle(10, HORIZ_DIR, 3);
     char tips[] = "TIPS & TRICKS";
@@ -247,9 +235,7 @@ void Menu::drawInstructions() {
     char t3[] = "- Explore everywhere";
     outtextxy(col2X + 20, 545, t3);
     
-    // ============================================================
-    // LEVELS - VÀNG SÁNG
-    // ============================================================
+    // lEVELS
     setcolor(COLOR(255, 220, 100));
     settextstyle(10, HORIZ_DIR, 4);
     char levels[] = "5 LEVELS";
@@ -260,9 +246,7 @@ void Menu::drawInstructions() {
     char lvl[] = "Easy -> Medium -> Hard -> Very Hard -> Boss";
     outtextxy(SCREEN_WIDTH/2 - 280, 635, lvl);
     
-    // ============================================================
-    // BACK BUTTON - VÀNG
-    // ============================================================
+    // bACK BUTTON
     setcolor(COLOR(180, 130, 0));
     settextstyle(10, HORIZ_DIR, 3);
     char back[] = "Press ESC to go back";
@@ -280,11 +264,11 @@ void Menu::draw() {
 
 void Menu::handleInput() {
     char key = lastKey;
-    if (key == 72) {  // UP
+    if (key == 72) { // uP
         selectedOption--;
         if (selectedOption < 0) selectedOption = totalOptions - 1;
     }
-    else if (key == 80) {  // DOWN
+    else if (key == 80) { // dOWN
         selectedOption++;
         if (selectedOption >= totalOptions) selectedOption = 0;
     }

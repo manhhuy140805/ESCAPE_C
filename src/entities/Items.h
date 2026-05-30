@@ -3,6 +3,7 @@
 
 #include <graphics.h>
 #include "../config.h"
+#include "../graphics/CustomDrawing.h"
 
 struct KeyItem {
     int x;
@@ -18,6 +19,11 @@ struct DoorItem {
 
 static void drawKey(const KeyItem &k) {
     if (k.collected) return;
+    static int keyFrame = 0;
+    keyFrame++;
+    drawAffineKey(k.x, k.y, keyFrame);
+    return;
+
     int r = TILE_SIZE / 4;
     int cx = k.x;
     int cy = k.y - TILE_SIZE / 3;
@@ -25,14 +31,14 @@ static void drawKey(const KeyItem &k) {
     setcolor(GAME_COLOR_KEY);
     setfillstyle(SOLID_FILL, GAME_COLOR_KEY);
 
-    // Vòng tròn đầu chìa
+    // vòng tròn đầu chìa
     fillellipse(cx, cy, r, r);
 
-    // Thân chìa
+    // thân chìa
     int shaftLen = TILE_SIZE / 2;
     bar(cx - 2, cy, cx + 2, cy + shaftLen);
 
-    // Răng chìa
+    // răng chìa
     bar(cx - 2, cy + shaftLen - 4, cx - r, cy + shaftLen);
     bar(cx + 2, cy + shaftLen - 4, cx + r, cy + shaftLen);
 }
@@ -55,10 +61,10 @@ static void drawDoor(const DoorItem &d) {
     setlinestyle(SOLID_LINE, 0, 3);
     rectangle(x1, y1, x2, y2);
 
-    // Tay nắm cửa
+    // tay nắm cửa
     setcolor(GAME_COLOR_KEY);
     setfillstyle(SOLID_FILL, GAME_COLOR_KEY);
     fillellipse(x2 - TILE_SIZE / 3, d.y - TILE_SIZE * 1.5, 3, 3);
 }
 
-#endif // ENTITY_ITEMS_H
+#endif // eNTITY_ITEMS_H

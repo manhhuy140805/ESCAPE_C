@@ -5,15 +5,11 @@
 #include "../config.h"
 #include "../entities/Player.h"
 #include "../entities/Enemy.h"
+#include "../core/sound.h"
 
-// ============================================================
-//  Hệ thống bắn đạn chung cho tất cả các level
-//  Sử dụng MouseDir và getMouseDirection từ Enemy.h
-// ============================================================
+// hệ thống bắn đạn chung cho tất cả các level
 
-// ============================================================
-//  Xử lý bắn đạn thường (Click Trái)
-// ============================================================
+// xử lý bắn đạn thường
 static void handleNormalShoot(Player &player, Bullet playerBullets[], int maxBullets,
                                bool &wasLClick) {
     bool lClick = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
@@ -21,13 +17,15 @@ static void handleNormalShoot(Player &player, Bullet playerBullets[], int maxBul
         int originY = player.y - player.height / 2;
         MouseDir md = getMouseDirection(player.x, originY);
         
-        // Cập nhật hướng nhìn theo chuột
+        // cập nhật hướng nhìn theo chuột
         player.facingRight = (md.mouseX >= player.x);
         
-        // Tìm viên đạn rỗi và bắn
+        // tìm viên đạn rỗi và bắn
         for (int i = 0; i < maxBullets; ++i) {
             if (!playerBullets[i].active) {
+                playSoundEffect("src/medias/gun-shot.mp3");
                 playerBullets[i].active = true;
+                playerBullets[i].isRocket = false;
                 playerBullets[i].x  = (float)player.x;
                 playerBullets[i].y  = (float)originY;
                 playerBullets[i].vx = md.dx * PLAYER_BULLET_SPEED;
@@ -39,29 +37,29 @@ static void handleNormalShoot(Player &player, Bullet playerBullets[], int maxBul
     wasLClick = lClick;
 }
 
-// ============================================================
-//  Xử lý Rocket Jump (Click Phải)
-// ============================================================
+// xử lý Rocket Jump
 static void handleRocketJump(Player &player, Bullet playerBullets[], int maxBullets,
                               int &rocketCooldown, bool &wasRClick) {
     bool rClick = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
     if (rClick && !wasRClick && rocketCooldown <= 0) {
+        playSoundEffect("src/medias/rocket.mp3");
         int originY = player.y - player.height / 2;
         MouseDir md = getMouseDirection(player.x, originY);
         
-        // Đẩy player NGƯỢC hướng chuột (tăng hệ số để bù cho góc chéo)
+        // đẩy player NGƯỢC hướng chuột
         player.vx = -md.dx * GAME_MOVE_SPEED * 2.5f;
         player.vy = -md.dy * GAME_JUMP_VELOCITY * 1.3f;
         player.onGround = false;
         rocketCooldown = ROCKET_COOLDOWN_MAX;
         
-        // Cập nhật hướng nhìn
+        // cập nhật hướng nhìn
         player.facingRight = (md.mouseX >= player.x);
         
-        // Bắn đạn mạnh về hướng chuột
+        // bắn đạn mạnh về hướng chuột
         for (int i = 0; i < maxBullets; ++i) {
             if (!playerBullets[i].active) {
                 playerBullets[i].active = true;
+                playerBullets[i].isRocket = true;
                 playerBullets[i].x  = (float)player.x;
                 playerBullets[i].y  = (float)originY;
                 playerBullets[i].vx = md.dx * PLAYER_BULLET_SPEED * 1.5f;
@@ -73,29 +71,27 @@ static void handleRocketJump(Player &player, Bullet playerBullets[], int maxBull
     wasRClick = rClick;
 }
 
-// ============================================================
-//  Cập nhật đạn player và kiểm tra va chạm với enemy
-// ============================================================
+// cập nhật đạn player và kiểm tra va chạm với enemy
 static void updatePlayerBullets(Bullet playerBullets[], int maxBullets,
-                                 Enemy enemies[], int maxEnemies) {
+                                 Enemy enemies[], int maxEnemies,
+                                 bool (*isSolidTile)(int row, int col)) {
     for (int i = 0; i < maxBullets; ++i) {
-        updateBullet(playerBullets[i]);
+        updateBulletWithTileCollision(playerBullets[i], isSolidTile);
         if (!playerBullets[i].active) continue;
         
-        // Kiểm tra trúng enemy
+        // kiểm tra trúng enemy
         for (int j = 0; j < maxEnemies; ++j) {
             if (playerBulletHitsEnemy(playerBullets[i], enemies[j])) {
                 enemies[j].active       = false;
                 playerBullets[i].active = false;
+                playSoundEffect("src/medias/trung-dan.mp3");
                 break;
             }
         }
     }
 }
 
-// ============================================================
-//  Vẽ thanh hồi chiêu Rocket Jump
-// ============================================================
+// vẽ thanh hồi chiêu Rocket Jump
 static void drawRocketCooldownBar(int rocketCooldown, bool paused) {
     if (paused) return;
     
@@ -116,14 +112,11 @@ static void drawRocketCooldownBar(int rocketCooldown, bool paused) {
     setbkcolor(HEX2COLOR(GAME_COLOR_BG));
 }
 
-// ============================================================
-//  Kiểm tra đạn quái trúng player và xử lý HP
-//  Trả về true nếu player chết (hết HP)
-// ============================================================
+// kiểm tra đạn quái trúng player và xử lý HP
 static bool checkEnemyBulletsHitPlayer(Bullet bullets[], int maxBullets, Player &player) {
     if (player.invincibleTimer > 0) {
         player.invincibleTimer--;
-        return false; // Đang bất tử, không nhận sát thương
+        return false; // đang bất tử, không nhận sát thương
     }
     
     int px1 = player.x - player.width / 2;
@@ -135,16 +128,17 @@ static bool checkEnemyBulletsHitPlayer(Bullet bullets[], int maxBullets, Player 
         if (bulletHitsPlayer(bullets[i], px1, py1, px2, py2)) {
             player.hp--;
             bullets[i].active = false;
-            player.invincibleTimer = 60; // 1 giây bất tử (60 frames)
+            player.invincibleTimer = 60; // 1 giây bất tử
+            playSoundEffect("src/medias/trung-dan.mp3");
             
             if (player.hp <= 0) {
-                return true; // Player chết
+                return true; // player chết
             }
-            break; // Chỉ nhận 1 đạn mỗi lần
+            break; // chỉ nhận 1 đạn mỗi lần
         }
     }
     
     return false;
 }
 
-#endif // SHOOTING_SYSTEM_H
+#endif // sHOOTING_SYSTEM_H

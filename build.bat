@@ -6,7 +6,7 @@ C:\TDM-GCC-32\bin\g++.exe -g ^
     src\main.cpp ^
     src\graphics\Menu.cpp ^
     -o game.exe ^
-    -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32
+    -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -lwinmm
 
 if %errorlevel% equ 0 (
     echo Build successful!

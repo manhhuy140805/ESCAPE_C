@@ -63,11 +63,11 @@ static void initLevel5() {
         }
     }
 
-    // Khởi tạo enemies Level 5 - level cuối, khó nhất
-    enemies[0] = makeEnemy(20 * TILE_SIZE, 16 * TILE_SIZE, false, 80, true, 60);
-    enemies[1] = makeEnemy(32 * TILE_SIZE, 12 * TILE_SIZE, true, 90, true, 80);
-    enemies[2] = makeEnemy(40 * TILE_SIZE, 8 * TILE_SIZE, false, 100, false, 0);
-    enemies[3] = makeEnemy(25 * TILE_SIZE, 5 * TILE_SIZE, true, 110, true, 100);
+    // khởi tạo enemies Level 5
+    enemies[0] = makeEnemy(20 * TILE_SIZE, 16 * TILE_SIZE, false, 80, true, 35);
+    enemies[1] = makeEnemy(29 * TILE_SIZE, 10 * TILE_SIZE, true, 90, true, 35);
+    enemies[2] = makeEnemy(24 * TILE_SIZE, 13 * TILE_SIZE, false, 100, false, 0);
+    enemies[3] = makeEnemy(17 * TILE_SIZE, 19 * TILE_SIZE, true, 110, true, 40);
     for (int i = 4; i < MAX_ENEMIES; ++i) enemies[i].active = false;
     resetBullets(bullets, MAX_BULLETS);
     resetBullets(playerBullets, MAX_PLAYER_BULLETS);
@@ -82,6 +82,7 @@ static void runGameLevel5() {
     bool wasRClick = false;
     bool paused = false;
     bool wasPauseDown = false;
+    MovementControl movementControl;
 
     while (currentState == PLAYING && running) {
         bool playerDead = false;
@@ -93,25 +94,22 @@ static void runGameLevel5() {
         wasPauseDown = pauseDown;
 
         if (!paused) {
-            SHORT aDown = GetAsyncKeyState('A');
-            SHORT dDown = GetAsyncKeyState('D');
+            handleSpeedControlKeys();
             SHORT wDown = GetAsyncKeyState('W');
             SHORT spaceDown = GetAsyncKeyState(VK_SPACE);
 
-            if (aDown & 0x8000) { player.vx = -GAME_MOVE_SPEED; player.facingRight = false; }
-            else if (dDown & 0x8000) { player.vx = GAME_MOVE_SPEED; player.facingRight = true; }
-            else { player.vx *= GAME_FRICTION; if (player.vx > -0.1f && player.vx < 0.1f) player.vx = 0.0f; }
+            updatePlayerHorizontalMovement(player, movementControl);
 
             bool jumpDown = ((wDown & 0x8000) != 0) || ((spaceDown & 0x8000) != 0);
             if (jumpDown && !wasJumpDown && player.onGround) { player.vy = -GAME_JUMP_VELOCITY; player.onGround = false; }
             wasJumpDown = jumpDown;
 
-            player.vy += GAME_GRAVITY;
+            player.vy += GAME_GRAVITY * GAME_SPEED_MULTIPLIER;
             if (player.vy > GAME_MAX_FALL_SPEED) player.vy = GAME_MAX_FALL_SPEED;
 
             int halfW = player.width / 2, fullH = player.height;
 
-            float newXf = player.x + player.vx;
+            float newXf = player.x + player.vx * GAME_SPEED_MULTIPLIER;
             int topY = player.y - fullH, bottomY = player.y - 1;
             if (player.vx > 0.0f) {
                 int col = (static_cast<int>(newXf) + halfW) / TILE_SIZE;
@@ -130,7 +128,7 @@ static void runGameLevel5() {
             if (player.x < halfW) player.x = halfW;
             if (player.x > SCREEN_WIDTH - halfW) player.x = SCREEN_WIDTH - halfW;
 
-            float newYf = player.y + player.vy;
+            float newYf = player.y + player.vy * GAME_SPEED_MULTIPLIER;
             int leftX = player.x - halfW, rightX = player.x + halfW - 1;
             player.onGround = false;
             if (player.vy > 0.0f) {
@@ -164,44 +162,44 @@ static void runGameLevel5() {
                 currentState = MENU; running = false; break;
             }
 
-            // ====== Cập nhật enemy và đạn (quái) ======
+  // ====== Cập nhật enemy và đạn
             for (int i = 0; i < MAX_ENEMIES; ++i)
                 updateEnemy(enemies[i], bullets, MAX_BULLETS, player, isSolidTileLevel5);
             for (int i = 0; i < MAX_BULLETS; ++i)
-                updateBullet(bullets[i]);
+                updateBulletWithTileCollision(bullets[i], isSolidTileLevel5);
 
-            // Kiểm tra đạn quái trúng player (dùng hệ thống HP)
+            // kiểm tra đạn quái trúng player
             if (checkEnemyBulletsHitPlayer(bullets, MAX_BULLETS, player)) {
                 playerDead = true;
             }
 
-            // Nếu hết HP -> hiện end screen
+            // nếu hết HP
             if (playerDead) {
                 EndAction action = showEndScreen(5, false);
                 if (action == END_RESTART) { initLevel5(); wasJumpDown = false; continue; }
                 currentState = MENU; running = false; break;
             }
 
-            // ====== Bắn đạn: Sử dụng hệ thống bắn đạn chung ======
+  // ====== Bắn đạn
             handleNormalShoot(player, playerBullets, MAX_PLAYER_BULLETS, wasLClick);
             handleRocketJump(player, playerBullets, MAX_PLAYER_BULLETS, rocketCooldown, wasRClick);
             if (rocketCooldown > 0) rocketCooldown--;
-            updatePlayerBullets(playerBullets, MAX_PLAYER_BULLETS, enemies, MAX_ENEMIES);
+            updatePlayerBullets(playerBullets, MAX_PLAYER_BULLETS, enemies, MAX_ENEMIES, isSolidTileLevel5);
 
             for (int i = 0; i < GAME_KEYS_REQUIRED; ++i) {
                 if (keys[i].collected) continue;
                 bool overlap = !(px2 < keys[i].x - TILE_SIZE/2 || px1 > keys[i].x + TILE_SIZE/2 ||
                                  py2 < keys[i].y - TILE_SIZE    || py1 > keys[i].y);
-                if (overlap) { keys[i].collected = true; keysCollected++; }
+                if (overlap) { keys[i].collected = true; keysCollected++; playCollectSound(); }
             }
-            if (!door1.open && keysCollected >= GAME_KEYS_REQUIRED) door1.open = true;
+            if (!door1.open && keysCollected >= GAME_KEYS_REQUIRED) { door1.open = true; playDoorSound(); }
 
             if (door1.open) {
                 reachedDoor = !(px2 < door1.x - TILE_SIZE || px1 > door1.x + TILE_SIZE ||
                                 py2 < door1.y - TILE_SIZE * 3 || py1 > door1.y);
             }
             if (reachedDoor) {
-                // Level 5 là level cuối - truyền isLastLevel = true
+                // level 5 là level cuối
                 EndAction action = showEndScreen(5, true, true);
                 if (action == END_RESTART) { initLevel5(); wasJumpDown = false; continue; }
                 currentState = MENU; running = false; break;
@@ -210,7 +208,7 @@ static void runGameLevel5() {
 
         beginFrame();
         
-        // Background Level 5: Không gian
+        // background Level 5
         drawLevel5Background();
         drawStars();
         
@@ -232,4 +230,4 @@ static void runGameLevel5() {
     }
 }
 
-#endif // LEVEL5_GAMEPLAY_H
+#endif // lEVEL5_GAMEPLAY_H

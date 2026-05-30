@@ -25,24 +25,24 @@
 static void demoFloodFillComparison() {
     cleardevice();
     
-    // Tiêu đề
+    // tiêu đề
     setcolor(WHITE);
     outtextxy(400, 20, (char*)"DEMO: FLOOD FILL 4-CONNECTED VS 8-CONNECTED");
     outtextxy(200, 50, (char*)"4-Connected (Trai)");
     outtextxy(650, 50, (char*)"8-Connected (Phai)");
     
-    // Vẽ 2 hình chữ nhật giống nhau
-    // Hình 1: 4-connected
+    // vẽ 2 hình chữ nhật giống nhau
+    // hình 1
     bresenhamRectangle(100, 100, 300, 250, WHITE);
     outtextxy(150, 270, (char*)"4 huong");
     
-    // Hình 2: 8-connected
+    // hình 2
     bresenhamRectangle(550, 100, 750, 250, WHITE);
     outtextxy(600, 270, (char*)"8 huong");
     
-    // Tô màu
-    floodFill(200, 175, BLUE);      // 4-connected
-    floodFill8(650, 175, GREEN);    // 8-connected
+    // tô màu
+    floodFill(200, 175, BLUE); // 4
+    floodFill8(650, 175, GREEN); // 8
     
     outtextxy(300, 750, (char*)"Nhan phim bat ky de tiep tuc...");
     getch();
@@ -57,48 +57,48 @@ static void demoBasicShapes() {
     setcolor(WHITE);
     outtextxy(350, 20, (char*)"DEMO: TO MAU CAC HINH CO BAN");
     
-    // Hình chữ nhật
+    // hình chữ nhật
     outtextxy(150, 80, (char*)"Hinh chu nhat");
     filledRectangle(100, 100, 250, 200, WHITE, RED);
     
-    // Tam giác
+    // tam giác
     outtextxy(400, 80, (char*)"Tam giac");
     filledTriangle(450, 100, 400, 200, 500, 200, WHITE, YELLOW);
     
-    // Hình tròn (dùng midpoint + flood fill)
+    // hình tròn
     outtextxy(650, 80, (char*)"Hinh tron");
     midpointCircle(700, 150, 50, WHITE);
     floodFill(700, 150, CYAN);
     
-    // Ellipse
+    // ellipse
     outtextxy(150, 280, (char*)"Ellipse");
     midpointEllipse(175, 380, 60, 40, WHITE);
     floodFill(175, 380, MAGENTA);
     
-    // Ngũ giác
+    // ngũ giác
     outtextxy(400, 280, (char*)"Ngu giac");
     int pentagon[] = {
-        450, 300,  // Đỉnh 1
-        490, 340,  // Đỉnh 2
-        470, 390,  // Đỉnh 3
-        430, 390,  // Đỉnh 4
-        410, 340   // Đỉnh 5
+        450, 300, // đỉnh 1
+        490, 340, // đỉnh 2
+        470, 390, // đỉnh 3
+        430, 390, // đỉnh 4
+        410, 340 // đỉnh 5
     };
     filledPolygon(pentagon, 5, WHITE, GREEN, 450, 360);
     
-    // Ngôi sao 5 cánh
+    // ngôi sao 5 cánh
     outtextxy(650, 280, (char*)"Ngoi sao");
     int star[] = {
-        700, 300,  // Đỉnh trên
-        710, 340,  // Phải trên
-        750, 340,  // Phải xa
-        720, 365,  // Phải dưới
-        730, 400,  // Phải xa dưới
-        700, 380,  // Dưới
-        670, 400,  // Trái xa dưới
-        680, 365,  // Trái dưới
-        650, 340,  // Trái xa
-        690, 340   // Trái trên
+        700, 300, // đỉnh trên
+        710, 340, // phải trên
+        750, 340, // phải xa
+        720, 365, // phải dưới
+        730, 400, // phải xa dưới
+        700, 380, // dưới
+        670, 400, // trái xa dưới
+        680, 365, // trái dưới
+        650, 340, // trái xa
+        690, 340 // trái trên
     };
     filledPolygon(star, 10, YELLOW, YELLOW, 700, 355);
     
@@ -118,57 +118,57 @@ static void demoComplexShape() {
     int centerX = 550;
     int centerY = 400;
     
-    // Mái nhà (tam giác)
+    // mái nhà
     filledTriangle(
-        centerX, centerY - 100,      // Đỉnh
-        centerX - 120, centerY,      // Trái
-        centerX + 120, centerY,      // Phải
+        centerX, centerY - 100, // đỉnh
+        centerX - 120, centerY, // trái
+        centerX + 120, centerY, // phải
         WHITE, RED
     );
     
-    // Thân nhà (hình chữ nhật)
+    // thân nhà
     filledRectangle(
         centerX - 100, centerY,
         centerX + 100, centerY + 150,
         WHITE, YELLOW
     );
     
-    // Cửa (hình chữ nhật)
+    // cửa
     filledRectangle(
         centerX - 30, centerY + 70,
         centerX + 30, centerY + 150,
         WHITE, BROWN
     );
     
-    // Cửa sổ trái
+    // cửa sổ trái
     filledRectangle(
         centerX - 80, centerY + 30,
         centerX - 40, centerY + 70,
         WHITE, CYAN
     );
     
-    // Cửa sổ phải
+    // cửa sổ phải
     filledRectangle(
         centerX + 40, centerY + 30,
         centerX + 80, centerY + 70,
         WHITE, CYAN
     );
     
-    // Khung cửa sổ (vẽ chữ thập)
+    // khung cửa sổ
     bresenhamLine(centerX - 60, centerY + 30, centerX - 60, centerY + 70, WHITE);
     bresenhamLine(centerX - 80, centerY + 50, centerX - 40, centerY + 50, WHITE);
     
     bresenhamLine(centerX + 60, centerY + 30, centerX + 60, centerY + 70, WHITE);
     bresenhamLine(centerX + 40, centerY + 50, centerX + 80, centerY + 50, WHITE);
     
-    // Ống khói
+    // ống khói
     filledRectangle(
         centerX + 50, centerY - 80,
         centerX + 70, centerY - 40,
         WHITE, DARKGRAY
     );
     
-    // Khói (các hình tròn nhỏ)
+    // khói
     midpointCircle(centerX + 60, centerY - 90, 8, LIGHTGRAY);
     floodFill(centerX + 60, centerY - 90, LIGHTGRAY);
     
@@ -178,11 +178,11 @@ static void demoComplexShape() {
     midpointCircle(centerX + 55, centerY - 120, 12, LIGHTGRAY);
     floodFill(centerX + 55, centerY - 120, LIGHTGRAY);
     
-    // Mặt trời
+    // mặt trời
     midpointCircle(150, 150, 40, YELLOW);
     floodFill(150, 150, YELLOW);
     
-    // Tia nắng
+    // tia nắng
     for (int i = 0; i < 8; i++) {
         float angle = i * 45 * M_PI / 180;
         int x1 = 150 + 50 * cos(angle);
@@ -192,7 +192,7 @@ static void demoComplexShape() {
         bresenhamLine(x1, y1, x2, y2, YELLOW);
     }
     
-    // Cỏ (các tam giác nhỏ)
+    // cỏ
     for (int i = 0; i < 10; i++) {
         int x = 350 + i * 40;
         filledTriangle(x, 550, x - 10, 570, x + 10, 570, WHITE, GREEN);
@@ -213,7 +213,7 @@ static void demoInteractive() {
     outtextxy(200, 50, (char*)"Click vao ben trong cac hinh de to mau");
     outtextxy(200, 70, (char*)"Nhan ESC de thoat");
     
-    // Vẽ các hình chỉ có viền
+    // vẽ các hình chỉ có viền
     bresenhamRectangle(100, 120, 250, 220, WHITE);
     outtextxy(130, 230, (char*)"Hinh 1");
     
@@ -227,10 +227,10 @@ static void demoInteractive() {
     outtextxy(680, 230, (char*)"Hinh 4");
     
     int pentagon[] = {200, 300, 240, 340, 220, 390, 180, 390, 160, 340};
-    filledPolygon(pentagon, 5, WHITE, BLACK, -1, -1); // Chỉ vẽ viền
+    filledPolygon(pentagon, 5, WHITE, BLACK, -1, -1); // chỉ vẽ viền
     outtextxy(180, 400, (char*)"Hinh 5");
     
-    // Vẽ bảng màu
+    // vẽ bảng màu
     outtextxy(400, 280, (char*)"Bang mau:");
     int colors[] = {RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, WHITE};
     const char* colorNames[] = {"RED", "GREEN", "BLUE", "YELLOW", "CYAN", "MAGENTA", "WHITE"};
@@ -245,11 +245,11 @@ static void demoInteractive() {
     outtextxy(200, 490, (char*)"2. Click vao ben trong hinh de to mau do");
     outtextxy(200, 510, (char*)"3. Thu voi cac hinh khac nhau!");
     
-    // Chế độ interactive (giả lập - trong thực tế cần xử lý mouse)
+    // chế độ interactive
     outtextxy(200, 600, (char*)"[Demo mode - Nhan phim bat ky de xem ket qua mau]");
     getch();
     
-    // Tô màu mẫu
+    // tô màu mẫu
     floodFill(175, 170, RED);
     floodFill(350, 170, GREEN);
     floodFill(550, 170, BLUE);
@@ -264,11 +264,11 @@ static void demoInteractive() {
  * Hàm chính chạy tất cả demo
  */
 void runFloodFillDemo() {
-    // Khởi tạo graphics
+    // khởi tạo graphics
     int gd = DETECT, gm;
     initgraph(&gd, &gm, (char*)"");
     
-    // Chạy các demo
+    // chạy các demo
     demoFloodFillComparison();
     demoBasicShapes();
     demoComplexShape();
